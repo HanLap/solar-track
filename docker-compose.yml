@@ -34,7 +34,7 @@ services:
       - frontend
     environment:
       API_PATH: http://frontend:3000
-      CRON_PATTERN: "* * * * * *"
+      CRON_PATTERN: "0 * * * * *"
     logging:
       driver: "json-file"
       options:
