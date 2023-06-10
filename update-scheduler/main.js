@@ -1,12 +1,12 @@
-import { CronJob } from "npm:cron@2.3.1";
+import { CronJob } from "cron";
 
 console.log("starting update scheduler");
 const job = () =>
   new CronJob(
-    Deno.env.CRON_PATTERN ?? "0 * * * * *",
+    process.env.CRON_PATTERN ?? "0 * * * * *",
     function () {
       console.log("querying solar max");
-      fetch(`${Deno.env.API_PATH ?? "http://localhost:5173"}/api/measurement`);
+      fetch(`${process.env.API_PATH ?? "http://localhost:5173"}/api/measurement`);
     },
     null,
     false,

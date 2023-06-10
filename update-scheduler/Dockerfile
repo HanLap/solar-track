@@ -1,7 +1,15 @@
-FROM denoland/deno:alpine-1.34.2
+FROM node:lts-alpine3.18
 
-COPY main.ts .
+WORKDIR /app
 
-RUN deno cache main.ts
+RUN npm install -g pnpm
 
-CMD ["run", "--allow-net", "main.ts"]
+# Files required by pnpm install
+COPY package.json pnpm-lock.yaml ./
+
+
+RUN pnpm install --frozen-lockfile
+
+COPY main.js .
+
+CMD [ "node", "main.js" ]
