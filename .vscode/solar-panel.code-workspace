@@ -1,0 +1,24 @@
+{
+  "folders": [
+    {
+      "name": "ROOT",
+      "path": ".."
+    },
+    {
+      "name": "frontend",
+      "path": "../frontend"
+    },
+    {
+      "name": "solarmax service",
+      "path": "../solarmax-service"
+    },
+    {
+      "name": "update scheduler",
+      "path": "../update-scheduler"
+    }
+  ],
+  "settings": {
+    "deno.enable": true,
+    "deno.lint": false
+  }
+}

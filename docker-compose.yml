@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  frontend: 
+    build: ./frontend
+    restart: unless-stopped
+    ports:
+      - 80:3000
+    environment:
+      API_PATH: http://solarmax-service:8000
+      DB_PATH: /data/data.db
+      ORIGIN: http://localhost
+    volumes: 
+      - ./data:/data:rw
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1k"
+        max-file: "3"
+
+  solarmax-service: 
+    build: ./solarmax-service
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1k"
+        max-file: "3"
+  
+  update-scheduler: 
+    build: ./update-scheduler
+    restart: unless-stopped
+    depends_on:
+      - frontend
+    environment:
+      API_PATH: http://frontend:3000
+      CRON_PATTERN: "* * * * * *"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1k"
+        max-file: "3"
