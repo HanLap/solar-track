@@ -16,12 +16,16 @@ const db = new Kysely({
   })
 })
 
+const migrationFolder = path.join(process.env.PWD, '/migrations');
+
+console.log('migrations dir:', migrationFolder)
+
 const migrator = new Migrator({
   db,
   provider: new FileMigrationProvider({
     fs,
     path,
-    migrationFolder: path.join(process.env.PWD, '/migrations'),
+    migrationFolder,
   })
 })
 

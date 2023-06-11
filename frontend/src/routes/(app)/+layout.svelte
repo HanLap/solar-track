@@ -6,7 +6,7 @@
 	import '@skeletonlabs/skeleton/styles/skeleton.css';
 
 	// Finally, your application's global stylesheet (sometimes labeled 'app.css')
-	import '../app.css';
+	import '../../app.css';
 </script>
 
 <slot />

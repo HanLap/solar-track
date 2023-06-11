@@ -1,9 +1,12 @@
+import path from 'node:path';
+import skeleton from '@skeletonlabs/skeleton/tailwind/skeleton.cjs';
+
 /** @type {import('tailwindcss').Config}*/
 const config = {
 	darkMode: 'class',
 	content: [
 		'./src/**/*.{html,js,svelte,ts}',
-		require('path').join(require.resolve(
+		path.join(require.resolve(
 			'@skeletonlabs/skeleton'),
 			'../**/*.{html,js,svelte,ts}'
 		)
@@ -13,7 +16,7 @@ const config = {
 		extend: {}
 	},
 
-	plugins: [...require('@skeletonlabs/skeleton/tailwind/skeleton.cjs')()]
+	plugins: [...skeleton()]
 };
 
 module.exports = config;

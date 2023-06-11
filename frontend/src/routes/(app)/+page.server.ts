@@ -1,8 +1,13 @@
 import SolarApi from '$lib/server/api/solarmax';
 import { db } from '$lib/server/db/db';
 import * as MeasurmentService from '$lib/server/services/MeasurementService';
+import * as datefns from 'date-fns';
+import { sql } from 'kysely';
 
-export async function load() {
+export async function load({ url }) {
+	const dayString = url.searchParams.get('day');
+	const day = dayString ? datefns.parse(dayString, 'yyyy-MM-dd', new Date()) : new Date();
+
 	const inverters = await db.selectFrom('inverter').selectAll().execute();
 
 	const measurments = await db.selectFrom('measurement').selectAll().execute();
@@ -12,6 +17,12 @@ export async function load() {
 			.selectFrom('measurement')
 			.select(['created_at as x', 'pac as y'])
 			.where('inverter_id', '=', i.id)
+			.where(
+				sql`created_at between ${datefns.format(
+					datefns.addDays(day, -1),
+					'yyyy-MM-dd'
+				)} and ${datefns.format(datefns.addDays(day, 1), 'yyyy-MM-dd')}`
+			)
 			.execute();
 
 		return {
@@ -26,14 +37,15 @@ export async function load() {
 		.where('inverter_id', '=', 1)
 		.execute();
 
-	const ivmax = Math.max(...inverters.map((i) => i.ivmax))
+	const ivmax = Math.max(...inverters.map((i) => i.ivmax));
 
 	return {
 		inverters,
 		measurments,
 		line,
 		lines: Promise.all(lines),
-		ivmax
+		ivmax,
+		day: datefns.format(day, 'yyyy-MM-dd'),
 	};
 }
 
@@ -73,7 +85,7 @@ export const actions = {
 		});
 	},
 
-	async getMeasurement({ fetch }) {
+	async getMeasurement() {
 		await MeasurmentService.createMeasurement();
 	}
 };
