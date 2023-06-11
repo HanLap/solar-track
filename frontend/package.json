@@ -44,6 +44,7 @@
 		"chartjs-adapter-date-fns": "^3.0.0",
 		"cron": "^2.3.1",
 		"date-fns": "^2.30.0",
+		"dotenv": "^16.1.4",
 		"kysely": "^0.25.0",
 		"svelte-chartjs": "^3.1.2"
 	}

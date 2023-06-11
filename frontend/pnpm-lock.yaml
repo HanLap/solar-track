@@ -20,6 +20,9 @@ dependencies:
   date-fns:
     specifier: ^2.30.0
     version: 2.30.0
+  dotenv:
+    specifier: ^16.1.4
+    version: 16.1.4
   kysely:
     specifier: ^0.25.0
     version: 0.25.0
@@ -1112,6 +1115,11 @@ packages:
     dependencies:
       esutils: 2.0.3
     dev: true
+
+  /dotenv@16.1.4:
+    resolution: {integrity: sha512-m55RtE8AsPeJBpOIFKihEmqUcoVncQIwo7x9U8ZwLEZw9ZpXboz2c+rvog+jUaJvVrZ5kBOeYQBX5+8Aa/OZQw==}
+    engines: {node: '>=12'}
+    dev: false
 
   /electron-to-chromium@1.4.427:
     resolution: {integrity: sha512-HK3r9l+Jm8dYAm1ctXEWIC+hV60zfcjS9UA5BDlYvnI5S7PU/yytjpvSrTNrSSRRkuu3tDyZhdkwIczh+0DWaw==}
