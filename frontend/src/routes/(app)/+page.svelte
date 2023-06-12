@@ -8,7 +8,6 @@
 
 	export let data;
 
-
 	$: day = datefns.parse(data.day, 'yyyy-MM-dd', new Date());
 
 	function handleDayChange(event: CustomEvent<Date>) {
@@ -26,21 +25,23 @@
 	});
 </script>
 
-<div class="mt-4 flex flex-row justify-center gap-4">
-	<a href="." class="btn btn-sm variant-filled-primary">Heute</a>
+<div class="flex flex-col h-screen max-h-screen gap-4 px-0 :px-20 py-8 ">
+	<div class="flex flex-row justify-center gap-4">
+		<a href="." class="btn btn-sm variant-filled-primary">Heute</a>
 
-	<DateInput date={day} on:change={handleDayChange} />
+		<DateInput date={day} on:change={handleDayChange} />
+	</div>
+
+	<div class="flex-1 p-4 relative flex justify-center">
+		<DayChart {day} ivmax={data.ivmax} lines={data.lines} />
+	</div>
+
+	<form method="post" class="" use:enhance>
+		<button type="submit" formaction="?/getInverters" class="btn btn-sm variant-filled-primary">
+			get inverters
+		</button>
+		<button type="submit" formaction="?/getMeasurement" class="btn btn-sm variant-filled-primary">
+			get Measurement
+		</button>
+	</form>
 </div>
-
-<DayChart {day} ivmax={data.ivmax} lines={data.lines} />
-
-
-
-<form method="post" class="mt-4" use:enhance>
-	<button type="submit" formaction="?/getInverters" class="btn btn-sm variant-filled-primary">
-		get inverters
-	</button>
-	<button type="submit" formaction="?/getMeasurement" class="btn btn-sm variant-filled-primary">
-		get Measurement
-	</button>
-</form>

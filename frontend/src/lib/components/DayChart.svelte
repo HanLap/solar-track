@@ -60,15 +60,16 @@
 	let loading = true;
 </script>
 
-{#if loading}
-	<ProgressBar meter="bg-primary-500" track="bf-primary-500/30" />
-{/if}
-<div>
+<div class="h-3/4 w-[70rem] max-w-full relative">
+	{#if loading}
+		<div class="absolute h-full w-full backdrop-blur flex items-center p-20 transition">
+			<ProgressBar meter="bg-primary-500" track="bf-primary-500/30" />
+		</div>
+	{/if}
 	<Line
 		data={chartdata}
 		options={{
 			animation: {
-				
 				onComplete: () => {
 					loading = false;
 				}
@@ -95,7 +96,7 @@
 							enabled: true
 						}
 					},
-					min: datefns.format(datefns.set(day, { hours: 5 }), 'yyyy-MM-dd HH:mm:ss'),
+					min: datefns.format(datefns.set(day, { hours: 2 }), 'yyyy-MM-dd HH:mm:ss'),
 					max: datefns.format(datefns.set(day, { hours: 23 }), 'yyyy-MM-dd HH:mm:ss')
 				},
 				y: {
