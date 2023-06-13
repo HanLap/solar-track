@@ -96,7 +96,7 @@
 							enabled: true
 						}
 					},
-					min: datefns.format(datefns.set(day, { hours: 2 }), 'yyyy-MM-dd HH:mm:ss'),
+					min: datefns.format(datefns.set(day, { hours: 3 }), 'yyyy-MM-dd HH:mm:ss'),
 					max: datefns.format(datefns.set(day, { hours: 23 }), 'yyyy-MM-dd HH:mm:ss')
 				},
 				y: {

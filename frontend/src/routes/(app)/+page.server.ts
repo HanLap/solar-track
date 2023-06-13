@@ -10,10 +10,8 @@ export async function load({ url }) {
 
 	const inverters = await db.selectFrom('inverter').selectAll().execute();
 
-	const measurments = await db.selectFrom('measurement').selectAll().execute();
-
 	const lines = inverters.map(async (i) => {
-		const data = await db
+		const data = (await db
 			.selectFrom('measurement')
 			.select(['created_at as x', 'pac as y'])
 			.where('inverter_id', '=', i.id)
@@ -23,7 +21,8 @@ export async function load({ url }) {
 					'yyyy-MM-dd'
 				)} and ${datefns.format(datefns.addDays(day, 1), 'yyyy-MM-dd')}`
 			)
-			.execute();
+			.execute())
+			.map(({x, y}) => ({x: x + 'Z', y}));
 
 		return {
 			name: i.name,
@@ -31,21 +30,13 @@ export async function load({ url }) {
 		};
 	});
 
-	const line = await db
-		.selectFrom('measurement')
-		.select(['created_at as x', 'pac as y'])
-		.where('inverter_id', '=', 1)
-		.execute();
-
 	const ivmax = Math.max(...inverters.map((i) => i.ivmax));
 
 	return {
 		inverters,
-		measurments,
-		line,
-		lines: Promise.all(lines),
 		ivmax,
 		day: datefns.format(day, 'yyyy-MM-dd'),
+		lines: Promise.all(lines),
 	};
 }
 
