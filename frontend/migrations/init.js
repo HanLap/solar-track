@@ -1,7 +1,7 @@
 import { sql } from 'kysely';
 
 /**
- * @param {import('kysely').Kysely<any>} db
+ * @param {import('kysely').Kysely<import('../src/lib/server/db/Database').Database>} db
  */
 export async function up(db) {
 	await db.schema
@@ -28,8 +28,9 @@ export async function up(db) {
 }
 
 /**
- * @param {import('kysely').Kysely<any>} db
+ * @param {import('kysely').Kysely<import('../src/lib/server/db/Database').Database>} db
  */
 export async function down(db) {
 	await db.schema.dropTable('inverter').execute();
+	await db.schema.dropTable('measurement').execute();
 }

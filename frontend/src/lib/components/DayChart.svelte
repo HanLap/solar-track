@@ -12,7 +12,10 @@
 		TimeSeriesScale,
 		Title,
 		Tooltip,
-		_adapters
+		_adapters,
+
+		animator
+
 	} from 'chart.js';
 	import 'chartjs-adapter-date-fns';
 	import * as datefns from 'date-fns';
@@ -49,7 +52,6 @@
 	$: chartdata = {
 		datasets: lines.map(({ name, data }) => ({
 			label: name,
-			fill: true,
 			bezierCurve: true,
 			lineTension: 0,
 			pointRadius: 0,
@@ -60,9 +62,9 @@
 	let loading = true;
 </script>
 
-<div class="h-3/4 w-[70rem] max-w-full relative">
+<div class="w-[70rem] max-w-full relative">
 	{#if loading}
-		<div class="absolute h-full w-full backdrop-blur flex items-center p-20 transition">
+		<div class="absolute h-full w-full backdrop-blur flex items-center p-20">
 			<ProgressBar meter="bg-primary-500" track="bf-primary-500/30" />
 		</div>
 	{/if}
@@ -70,6 +72,7 @@
 		data={chartdata}
 		options={{
 			animation: {
+				duration: 0,
 				onComplete: () => {
 					loading = false;
 				}

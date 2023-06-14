@@ -3,6 +3,7 @@ import { db } from '$lib/server/db/db';
 import * as MeasurmentService from '$lib/server/services/MeasurementService';
 import * as datefns from 'date-fns';
 import { sql } from 'kysely';
+import type { Actions } from './$types.js';
 
 export async function load({ url }) {
 	const dayString = url.searchParams.get('day');
@@ -10,19 +11,20 @@ export async function load({ url }) {
 
 	const inverters = await db.selectFrom('inverter').selectAll().execute();
 
-	const lines = inverters.map(async (i) => {
-		const data = (await db
-			.selectFrom('measurement')
-			.select(['created_at as x', 'pac as y'])
-			.where('inverter_id', '=', i.id)
-			.where(
-				sql`created_at between ${datefns.format(
-					datefns.addDays(day, -1),
-					'yyyy-MM-dd'
-				)} and ${datefns.format(datefns.addDays(day, 1), 'yyyy-MM-dd')}`
-			)
-			.execute())
-			.map(({x, y}) => ({x: x + 'Z', y}));
+	const inverterLines = inverters.map(async (i) => {
+		const data = (
+			await db
+				.selectFrom('measurement')
+				.select(['created_at as x', 'pac as y'])
+				.where('inverter_id', '=', i.id)
+				.where(
+					sql`created_at between ${datefns.format(
+						datefns.addDays(day, -1),
+						'yyyy-MM-dd'
+					)} and ${datefns.format(datefns.addDays(day, 1), 'yyyy-MM-dd')}`
+				)
+				.execute()
+		).map(({ x, y }) => ({ x: x + 'Z', y }));
 
 		return {
 			name: i.name,
@@ -30,17 +32,48 @@ export async function load({ url }) {
 		};
 	});
 
-	const ivmax = Math.max(...inverters.map((i) => i.ivmax));
+	const combinedLineData = (
+		await db
+			.selectFrom('measurement')
+			.select(['created_at as x', sql<number>`sum(pac)`.as('y')])
+			.innerJoin('inverter', 'inverter.id', 'measurement.inverter_id')
+			.where('inverter.plant_id', '=', 1)
+			.where(
+				sql`created_at between ${datefns.format(
+					datefns.addDays(day, -1),
+					'yyyy-MM-dd'
+				)} and ${datefns.format(datefns.addDays(day, 1), 'yyyy-MM-dd')}`
+			)
+			.groupBy('created_at')
+			.execute()
+	).map(({ x, y }) => ({ x: x + 'Z', y }));
+
+	const lines = [{ name: 'Gesamt', data: combinedLineData }, ...inverterLines];
+
+	const ivmax = inverters.reduce((acc, i) => acc + i.ivmax, 400);
+
+	const load =
+		(
+			await db
+				.selectFrom('measurement')
+				.select(sql<number>`sum(pac)`.as('sum'))
+				.innerJoin('inverter', 'inverter.id', 'measurement.inverter_id')
+				.where('inverter.plant_id', '=', 1)
+				.groupBy('created_at')
+				.orderBy('measurement.created_at', 'desc')
+				.executeTakeFirst()
+		)?.sum ?? undefined;
 
 	return {
 		inverters,
 		ivmax,
+		load,
 		day: datefns.format(day, 'yyyy-MM-dd'),
-		lines: Promise.all(lines),
+		lines: Promise.all(lines)
 	};
 }
 
-export const actions = {
+export const actions: Actions = {
 	async getInverters({ fetch }) {
 		const inverters = (await SolarApi.getInverters(fetch)).map((i) => ({
 			name: i.ivname as string,
@@ -60,7 +93,10 @@ export const actions = {
 					console.log(exists);
 
 					if (!exists) {
-						return tx.insertInto('inverter').values(i).execute();
+						return tx
+							.insertInto('inverter')
+							.values({ ...i, plant_id: 1 })
+							.execute();
 					} else {
 						return tx
 							.updateTable('inverter')

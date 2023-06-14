@@ -1,5 +1,6 @@
 import path from 'node:path';
 import skeleton from '@skeletonlabs/skeleton/tailwind/skeleton.cjs';
+import forms from '@tailwindcss/forms'
 
 /** @type {import('tailwindcss').Config}*/
 const config = {
@@ -16,7 +17,7 @@ const config = {
 		extend: {}
 	},
 
-	plugins: [...skeleton()]
+	plugins: [forms, ...skeleton()]
 };
 
 module.exports = config;

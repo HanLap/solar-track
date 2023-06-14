@@ -10,6 +10,9 @@ const dbPath = process.env.DB_PATH ?? "./data/data.db"
 const dbDir = path.dirname(dbPath);
 await fs.mkdir(dbDir, { recursive: true });
 
+
+const command = process.argv[2];
+
 const db = new Kysely({
   dialect: new SqliteDialect({
     database: new Database(dbPath)
@@ -29,7 +32,15 @@ const migrator = new Migrator({
   })
 })
 
-const { error, results } = await migrator.migrateToLatest()
+let res;
+if (command === 'down') {
+  res = await migrator.migrateDown();
+} else if (command === 'to') {
+  res = await migrator.migrateTo(process.argv[3]);
+} else {
+  res = await migrator.migrateToLatest()
+}
+const { results, error } = res;
 
 results?.forEach((it) => {
   if (it.status === 'Success') {

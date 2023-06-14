@@ -1,7 +1,10 @@
+import * as datefnsTZ from 'date-fns-tz';
 import SolarApi from '../api/solarmax';
 import { db } from '../db/db';
 
 export async function createMeasurement() {
+	const date = datefnsTZ.formatInTimeZone(new Date(), 'UTC', 'yyyy-MM-dd HH:mm:ss');
+
 	const measurement = await SolarApi.getMeasurement(fetch);
 
 	if (measurement.length === 0) throw new Error('No measurement data');
@@ -30,7 +33,8 @@ export async function createMeasurement() {
 					pac: m.pac,
 					pdc: m.pdc,
 					kdy: m.kdy,
-					kt0: m.kt0
+					kt0: m.kt0,
+					created_at: date
 				};
 			})
 		)

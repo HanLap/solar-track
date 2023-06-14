@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
 	import { goto, invalidateAll } from '$app/navigation';
 	import DateInput from '$lib/components/DateInput.svelte';
 	import DayChart from '$lib/components/DayChart.svelte';
+	import { ProgressBar } from '@skeletonlabs/skeleton';
 	import * as datefns from 'date-fns';
 	import { onMount } from 'svelte';
 
@@ -25,23 +25,38 @@
 	});
 </script>
 
-<div class="flex flex-col h-screen max-h-screen gap-4 px-0 :px-20 py-8 ">
+<div class="h-full flex flex-col gap-4 px-0 lg:px-20 py-8">
 	<div class="flex flex-row justify-center gap-4">
 		<a href="." class="btn btn-sm variant-filled-primary">Heute</a>
 
-		<DateInput date={day} on:change={handleDayChange} />
+		<DateInput date={day} on:change={handleDayChange} arrows />
+
+		<a href="/export" class="btn btn-sm variant-ghost-primary">Daten Exportieren</a>
 	</div>
 
 	<div class="flex-1 p-4 relative flex justify-center">
 		<DayChart {day} ivmax={data.ivmax} lines={data.lines} />
 	</div>
+	<div class="w-full flex flex-col items-center justify-center gap-2">
+		<div class="max-w-full w-[40rem]">
+			<div class="flex justify-between px-4 py-1">
+				<span> Momentane Auslastung: </span>
 
-	<form method="post" class="" use:enhance>
+				<span>{Math.round(((data.load ?? 0) / data.ivmax) * 100)}%</span>
+			</div>
+			<ProgressBar
+				label="Progress Bar"
+				value={data.load ?? 0}
+				max={data.ivmax}
+				meter="bg-primary-600-300-token"
+				track="bg-primary-300-600-token"
+			/>
+		</div>
+	</div>
+
+	<!-- <form method="post" class="" use:enhance>
 		<button type="submit" formaction="?/getInverters" class="btn btn-sm variant-filled-primary">
 			get inverters
 		</button>
-		<button type="submit" formaction="?/getMeasurement" class="btn btn-sm variant-filled-primary">
-			get Measurement
-		</button>
-	</form>
+	</form> -->
 </div>
