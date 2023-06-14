@@ -14,6 +14,34 @@
 	let dataRows: number | undefined = undefined;
 	let fetchingRows: boolean = false;
 
+	let all: { id: string; desc: string; example: string }[] = [
+		{
+			id: 'pdc',
+			desc: 'PDC',
+			example: '3123.0'
+		},
+		{
+			id: 'kdy',
+			desc: 'KDY',
+			example: '70000.0'
+		},
+		{
+			id: 'kt0',
+			desc: 'KT0',
+			example: '30000.0'
+		},
+		{
+			id: 'date',
+			desc: 'Datum',
+			example: '2021-01-01 08:30:00'
+		},
+		{
+			id: 'pac',
+			desc: 'PAC',
+			example: '6000.3'
+		}
+	];
+
 	let available: { id: string; desc: string; example: string }[] = [
 		{
 			id: 'pdc',
@@ -67,6 +95,7 @@
 
 		if (stored) {
 			selected = JSON.parse(stored);
+			available = all.filter((item) => !selected.find((s) => s.id === item.id));
 		}
 	});
 

@@ -39,4 +39,6 @@ export async function createMeasurement() {
 			})
 		)
 		.execute();
+
+	console.log('query suscessful')
 }
