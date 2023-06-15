@@ -81,7 +81,9 @@
 		return ({ result, update }) => {
 			if (result.type === 'success') {
 				const data = new Blob([result?.data?.csv], { type: 'text/csv' });
+				const date = datefns.format(new Date(), 'yyyy-MM-dd_HH-mm-ss');
 
+				downloadLink.download = `${date}-export.csv`;
 				downloadLink.href = URL.createObjectURL(data);
 				downloadLink.click();
 			}
@@ -97,6 +99,8 @@
 			selected = JSON.parse(stored);
 			available = all.filter((item) => !selected.find((s) => s.id === item.id));
 		}
+		 
+		handleFetchRows(start, end);
 	});
 
 	function handleStartChange(e: CustomEvent<Date>) {
@@ -115,9 +119,6 @@
 			const res = await fetch(`/api/plant/${1}/count?start=${startStr}&end=${endStr}`);
 
 			const data = await res.json();
-
-			console.log(data);
-
 			dataRows = data.count;
 		} catch (e) {
 			console.error(e);

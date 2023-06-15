@@ -3,6 +3,7 @@ import { db } from '$lib/server/db/db';
 import { fail } from '@sveltejs/kit';
 import { sql, type SelectExpression } from 'kysely';
 import type { Actions } from './$types';
+import * as datefns from 'date-fns';
 
 export async function load() {
 	return {};
@@ -12,9 +13,11 @@ export const actions: Actions = {
 	async default({ request }) {
 		const formData = await request.formData();
 		const start = formData.get('start') as string;
-		const end = formData.get('end') as string;
+		const endStr = formData.get('end') as string;
 		const formatString = formData.get('format') as string;
 		const format = formatString.split(',');
+
+		const end = datefns.format(datefns.addDays(new Date(endStr), 1), 'yyyy-MM-dd');
 
 		for (const f of format) {
 			if (!['date', 'pac', 'pdc', 'kdy', 'kt0'].includes(f)) {
