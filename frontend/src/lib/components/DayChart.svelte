@@ -13,9 +13,6 @@
 		Title,
 		Tooltip,
 		_adapters,
-
-		animator
-
 	} from 'chart.js';
 	import 'chartjs-adapter-date-fns';
 	import * as datefns from 'date-fns';
@@ -38,6 +35,7 @@
 	export let ivmax: number;
 	export let day: Date;
 	export let lines: { name: string; data: { x: string; y: number }[] }[];
+	export let loading: boolean;
 
 	_adapters._date.override({
 		..._adapters._date,
@@ -59,7 +57,6 @@
 		}))
 	};
 
-	let loading = true;
 </script>
 
 <div class="w-[70rem] max-w-full relative">
@@ -73,9 +70,6 @@
 		options={{
 			animation: {
 				duration: 0,
-				onComplete: () => {
-					loading = false;
-				}
 			},
 			spanGaps: 1000 * 60 * 60, // 1 hour
 			responsive: true,

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { goto, invalidateAll } from '$app/navigation';
+	import { afterNavigate, beforeNavigate, goto, invalidateAll } from '$app/navigation';
 	import DateInput from '$lib/components/DateInput.svelte';
 	import DayChart from '$lib/components/DayChart.svelte';
 	import { ProgressBar } from '@skeletonlabs/skeleton';
@@ -13,6 +13,15 @@
 	function handleDayChange(event: CustomEvent<Date>) {
 		goto(`?day=${datefns.format(event.detail, 'yyyy-MM-dd')}`);
 	}
+
+	beforeNavigate(({from, to}) => {
+		if (from?.url?.href === to?.url?.href) {
+			return;
+		}
+
+		data.loading = true;
+		data.lines = [];
+	});
 
 	onMount(() => {
 		const refresh = setInterval(() => {
@@ -35,7 +44,7 @@
 	</div>
 
 	<div class="flex-1 p-4 relative flex justify-center">
-		<DayChart {day} ivmax={data.ivmax} lines={data.lines} />
+		<DayChart {day} ivmax={data.ivmax} lines={data.lines} loading={data.loading} />
 	</div>
 	<div class="w-full flex flex-col items-center justify-center gap-2">
 		<div class="max-w-full w-[40rem]">

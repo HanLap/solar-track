@@ -69,7 +69,8 @@ export async function load({ url }) {
 		ivmax,
 		load,
 		day: datefns.format(day, 'yyyy-MM-dd'),
-		lines: Promise.all(lines)
+		lines: Promise.all(lines),
+		loading: false,
 	};
 }
 
