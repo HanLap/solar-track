@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { afterNavigate, beforeNavigate, goto, invalidateAll } from '$app/navigation';
+	import { beforeNavigate, goto, invalidateAll } from '$app/navigation';
 	import DateInput from '$lib/components/DateInput.svelte';
 	import DayChart from '$lib/components/DayChart.svelte';
 	import { ProgressBar } from '@skeletonlabs/skeleton';
