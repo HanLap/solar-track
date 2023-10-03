@@ -33,8 +33,8 @@
 		};
 	});
 </script>
-
-<div class="h-full flex flex-col gap-4 px-0 lg:px-20 py-8">
+<div class="h-full w-full flex">
+<div class="flex-1 flex flex-col gap-8 px-0 lg:px-20 py-8">
 	<div class="flex flex-row justify-center gap-4">
 		<a href="." class="btn btn-sm variant-filled-primary">Heute</a>
 
@@ -43,7 +43,7 @@
 		<a href="/export" class="btn btn-sm variant-ghost-primary">Daten Exportieren</a>
 	</div>
 
-	<div class="flex-1 p-4 relative flex justify-center">
+	<div class="flex-1 relative flex justify-center">
 		<DayChart {day} ivmax={data.ivmax} lines={data.lines} loading={data.loading} />
 	</div>
 	<div class="w-full flex flex-col items-center justify-center gap-2">
@@ -68,4 +68,6 @@
 			get inverters
 		</button>
 	</form> -->
+</div>
+
 </div>

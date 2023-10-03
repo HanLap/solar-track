@@ -12,7 +12,7 @@
 		TimeSeriesScale,
 		Title,
 		Tooltip,
-		_adapters,
+		_adapters
 	} from 'chart.js';
 	import 'chartjs-adapter-date-fns';
 	import * as datefns from 'date-fns';
@@ -56,10 +56,9 @@
 			data
 		}))
 	};
-
 </script>
 
-<div class="w-[70rem] max-w-full relative">
+<div class="w-[70rem] max-w-full relative max-h-full">
 	{#if loading}
 		<div class="absolute h-full w-full backdrop-blur flex items-center p-20">
 			<ProgressBar meter="bg-primary-500" track="bf-primary-500/30" />
@@ -69,7 +68,7 @@
 		data={chartdata}
 		options={{
 			animation: {
-				duration: 0,
+				duration: 0
 			},
 			spanGaps: 1000 * 60 * 60, // 1 hour
 			responsive: true,

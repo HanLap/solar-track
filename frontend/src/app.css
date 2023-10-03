@@ -4,3 +4,5 @@
 @tailwind utilities;
 
 html, body { @apply h-full overflow-hidden; }
+
+* { @apply box-border; }
