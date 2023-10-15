@@ -70,7 +70,7 @@ export async function load({ url }) {
 		load,
 		day: datefns.format(day, 'yyyy-MM-dd'),
 		lines: Promise.all(lines),
-		loading: false,
+		loading: false
 	};
 }
 
