@@ -1,0 +1,9 @@
+version: '3.8'
+
+services:
+  frontend:
+    build: ./frontend
+  solarmax-service:
+    build: ./solarmax-service
+  update-scheduler: 
+    build: ./update-scheduler

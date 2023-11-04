@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   frontend: 
-    build: ./frontend
+    image: ghcr.io/hanlap/solar-panel/frontend:main 
     restart: unless-stopped
     ports:
       - 80:3000
@@ -19,7 +19,7 @@ services:
         max-file: "3"
 
   solarmax-service: 
-    build: ./solarmax-service
+    image: ghcr.io/hanlap/solar-panel/solarmax-service:main 
     restart: unless-stopped
     logging:
       driver: "json-file"
@@ -28,7 +28,7 @@ services:
         max-file: "3"
   
   update-scheduler: 
-    build: ./update-scheduler
+    image: ghcr.io/hanlap/solar-panel/update-scheduler:main 
     restart: unless-stopped
     depends_on:
       - frontend
