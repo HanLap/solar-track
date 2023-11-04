@@ -24,6 +24,7 @@ export async function up(db) {
     endAddr: 10,
   }).execute();
 
+
   await db.schema
     .alterTable('inverter')
     .addColumn('plant_id', 'integer', col =>
@@ -31,9 +32,12 @@ export async function up(db) {
     )
     .execute()
 
+
+
   await db.updateTable('inverter')
     .set({ plant_id: sql`(select id from solar_plant)` })
     .execute();
+  console.log('blub')
 
   await db.schema
     .createTable('inverter_tmp')
@@ -45,9 +49,15 @@ export async function up(db) {
     .addColumn('name', 'varchar', (column) => column.notNull())
     .addColumn('ivmax', 'integer', (column) => column.notNull())
     .execute();
-  await db.insertInto('inverter_tmp')
-    .values(await db.selectFrom('inverter').selectAll().execute())
-    .execute();
+  {
+    const values = await db.selectFrom('inverter').selectAll().execute();
+
+    if (values.length > 0) {
+      await db.insertInto('inverter_tmp')
+        .values(values)
+        .execute();
+    }
+  }
 
 
   await db.schema
