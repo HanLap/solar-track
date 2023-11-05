@@ -1,6 +1,6 @@
 import path from 'node:path';
-import skeleton from '@skeletonlabs/skeleton/tailwind/skeleton.cjs';
-import forms from '@tailwindcss/forms'
+import forms from '@tailwindcss/forms';
+import { skeleton } from '@skeletonlabs/tw-plugin';
 
 /** @type {import('tailwindcss').Config}*/
 const config = {
@@ -17,7 +17,11 @@ const config = {
 		extend: {}
 	},
 
-	plugins: [forms, ...skeleton()]
+	plugins: [forms, skeleton({
+		themes: {
+			preset: [ 'crimson' ]
+		}
+	})]
 };
 
 module.exports = config;

@@ -9,10 +9,20 @@
 
 	let downloadLink: HTMLAnchorElement;
 
+	const exportModes = {
+		Day: { id: 'day', text: 'Tag' },
+		Span: { id: 'span', text: 'Zeitraum' }
+	};
+	let selectedExportMode = exportModes.Day;
+
 	let start = new Date();
 	let end = new Date();
 	let dataRows: number | undefined = undefined;
 	let fetchingRows: boolean = false;
+
+	$: {
+		console.log(start, end);
+	}
 
 	let all: { id: string; desc: string; example: string }[] = [
 		{
@@ -81,9 +91,16 @@
 		return ({ result, update }) => {
 			if (result.type === 'success') {
 				const data = new Blob([result?.data?.csv], { type: 'text/csv' });
-				const date = datefns.format(new Date(), 'yyyy-MM-dd_HH-mm-ss');
 
-				downloadLink.download = `${date}-export.csv`;
+				if (selectedExportMode === exportModes.Day) {
+					const date = datefns.format(start, 'yyyy-MM-dd');
+					downloadLink.download = `${date}-export.csv`;
+				} else {
+					const startDate = datefns.format(start, 'yyyy-MM-dd');
+					const endDate = datefns.format(end, 'yyyy-MM-dd');
+					downloadLink.download = `${startDate}_${endDate}-export.csv`;
+				}
+
 				downloadLink.href = URL.createObjectURL(data);
 				downloadLink.click();
 			}
@@ -99,9 +116,15 @@
 			selected = JSON.parse(stored);
 			available = all.filter((item) => !selected.find((s) => s.id === item.id));
 		}
-		 
+
 		handleFetchRows(start, end);
 	});
+
+	function handleDayChange(e: CustomEvent<Date>) {
+		start = e.detail;
+		end = e.detail;
+		handleFetchRows(e.detail, e.detail);
+	}
 
 	function handleStartChange(e: CustomEvent<Date>) {
 		handleFetchRows(e.detail, end);
@@ -131,19 +154,50 @@
 <!-- svelte-ignore a11y-missing-attribute -->
 <a bind:this={downloadLink} class="hidden" download="export.csv" />
 
-<form
-	method="post"
-	class="mx-auto my-8 flex flex-col gap-4 max-w-fit"
-	use:enhance={handleFormSubmit}
->
+<div class="mx-auto my-8 flex flex-col gap-4 max-w-fit">
 	<h2 class="h2">Daten als CSV-Datei exportieren</h2>
 
-	<h4 class="h4">Zeitraum:</h4>
-	<div class="flex items-center gap-2">
-		<DateInput name="start" bind:date={start} on:change={handleStartChange} />
-		<span>-</span>
-		<DateInput name="end" bind:date={end} on:change={handleEndChange} />
+	<div class="flex justify-center gap-1">
+		{#each Object.values(exportModes) as mode}
+			{@const selected = selectedExportMode === mode}
+			<span
+				class="chip bg-surface-700"
+				class:variant-filled={selected}
+				on:click={() => (selectedExportMode = mode)}
+				on:keypress
+			>
+				{#if selected}
+					<span>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							fill="currentColor"
+							stroke="currentColor"
+							class="h-4 text-surface-50-900-token"
+							viewBox="0 0 24 24"
+						>
+							<title>check</title>
+							<path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z" />
+						</svg>
+					</span>
+				{/if}
+				<span>{mode.text}</span>
+			</span>
+		{/each}
 	</div>
+
+	{#if selectedExportMode === exportModes.Day}
+		<h4 class="h4">Tag:</h4>
+		<div class="flex items-center gap-2">
+			<DateInput date={start} on:change={handleDayChange} />
+		</div>
+	{:else if selectedExportMode === exportModes.Span}
+		<h4 class="h4">Zeitraum:</h4>
+		<div class="flex items-center gap-2">
+			<DateInput bind:date={start} on:change={handleStartChange} />
+			<span>-</span>
+			<DateInput bind:date={end} on:change={handleEndChange} />
+		</div>
+	{/if}
 
 	<div class="h-4 flex">
 		{#if fetchingRows}
@@ -182,7 +236,12 @@
 		</div>
 	</div>
 
-	<input type="hidden" name="format" value={selected.map(({ id }) => id).join(',')} />
+	<form method="post" use:enhance={handleFormSubmit}>
+		<DateInput name="start" date={start} hidden />
+		<DateInput name="end" date={end} hidden />
 
-	<button class="btn variant-filled-primary mt-10">Exportieren</button>
-</form>
+		<input type="hidden" name="format" value={selected.map(({ id }) => id).join(',')} />
+
+		<button class="btn variant-filled-primary mt-10">Exportieren</button>
+	</form>
+</div>
