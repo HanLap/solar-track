@@ -55,7 +55,8 @@ export const actions: Actions = {
 			return fail(404, { noData: true });
 		}
 
-		const csv = data.map((row) => Object.values(row).join(',')).join('\n');
+		let csv = data.map((row) => Object.values(row).join(',')).join('\n');
+		csv = `${formatString}\n` + csv;
 
 		return { csv };
 	}
