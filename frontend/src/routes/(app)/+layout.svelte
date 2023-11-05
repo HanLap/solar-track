@@ -4,8 +4,6 @@
 	import { fly } from 'svelte/transition';
 	import { cubicIn, cubicOut } from 'svelte/easing';
 
-	import '@skeletonlabs/skeleton/styles/skeleton.css';
-	import '@skeletonlabs/skeleton/themes/theme-crimson.css';
 	import '../../app.css';
 
 	export let data;
