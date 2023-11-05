@@ -6,6 +6,7 @@
 	export let date: Date;
 	export let name: string | undefined = undefined;
 	export let arrows = false;
+	export let hidden = false;
 
 	const dispatch = createEventDispatcher();
 
@@ -33,7 +34,7 @@
 </script>
 
 <div class="input-group grid-cols-[auto_1fr_auto] max-w-fit">
-	{#if arrows}
+	{#if arrows && !hidden}
 		<button class="input-group-shim" on:click={handlePrevDay}>
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
@@ -47,8 +48,8 @@
 			</svg>
 		</button>
 	{/if}
-	<input type="date" {name} bind:value class="px-3" on:change={dispatchChange} />
-	{#if arrows}
+	<input type="date" {name} bind:value class="px-3" on:change={dispatchChange} {hidden} />
+	{#if arrows && !hidden}
 		<button class="input-group-shim" on:click={handleNextDay}>
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
