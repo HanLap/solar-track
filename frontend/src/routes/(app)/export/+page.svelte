@@ -154,14 +154,17 @@
 <!-- svelte-ignore a11y-missing-attribute -->
 <a bind:this={downloadLink} class="hidden" download="export.csv" />
 
-<div class="mx-auto my-8 flex flex-col gap-4 max-w-fit">
+<div class="mx-auto my-8 flex max-w-fit flex-col gap-4">
 	<h2 class="h2">Daten als CSV-Datei exportieren</h2>
 
 	<div class="flex justify-center gap-1">
 		{#each Object.values(exportModes) as mode}
 			{@const selected = selectedExportMode === mode}
-			<span
-				class="chip bg-surface-700"
+			{@const stateClass = selected
+				? 'bg-surface-700-200-token text-surface-200-700-token'
+				: 'bg-surface-200-700-token text-surface-700-200-token'}
+			<button
+				class="chip {stateClass}"
 				class:variant-filled={selected}
 				on:click={() => (selectedExportMode = mode)}
 				on:keypress
@@ -172,7 +175,7 @@
 							xmlns="http://www.w3.org/2000/svg"
 							fill="currentColor"
 							stroke="currentColor"
-							class="h-4 text-surface-50-900-token"
+							class="text-surface-50-900-token h-4"
 							viewBox="0 0 24 24"
 						>
 							<title>check</title>
@@ -181,7 +184,7 @@
 					</span>
 				{/if}
 				<span>{mode.text}</span>
-			</span>
+			</button>
 		{/each}
 	</div>
 
@@ -199,10 +202,10 @@
 		</div>
 	{/if}
 
-	<div class="h-4 flex">
+	<div class="flex h-4">
 		{#if fetchingRows}
 			<ConicGradient
-				class="pl-10 h-4"
+				class="h-4 pl-10"
 				width="w-4"
 				stops={[
 					{ color: 'transparent', start: 0, end: 25 },
