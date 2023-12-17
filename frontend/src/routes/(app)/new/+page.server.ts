@@ -28,6 +28,6 @@ export const actions = {
 			return fail(500);
 		}
 
-		throw redirect(304, '/');
+		redirect(304, '/');
 	}
 };

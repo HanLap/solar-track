@@ -9,7 +9,7 @@ export async function GET({ url, params }) {
 	const endStr = url.searchParams.get('end');
 
 	if (isNaN(id) || !startStr || !endStr) {
-		throw error(400, 'id, start and end are required');
+		error(400, 'id, start and end are required');
 	}
 
 	const end = datefns.format(datefns.addDays(new Date(endStr), 1), 'yyyy-MM-dd');
