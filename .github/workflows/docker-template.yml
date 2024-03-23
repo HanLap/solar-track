@@ -50,7 +50,7 @@ jobs:
     - name: Build and Push
       uses: docker/build-push-action@v5
       with:
-        context: ./${{ inputs.service }}
+        context: .
         target: ${{ inputs.service }}
         platforms: linux/amd64,linux/arm64
         push: true
