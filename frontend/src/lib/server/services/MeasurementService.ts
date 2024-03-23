@@ -15,7 +15,7 @@ export async function createMeasurement() {
 		.where(
 			'addr',
 			'in',
-			measurement.map((m) => m.addr)
+			measurement.map((m) => m.addr),
 		)
 		.execute();
 
@@ -34,9 +34,9 @@ export async function createMeasurement() {
 					pdc: m.pdc,
 					kdy: m.kdy,
 					kt0: m.kt0,
-					created_at: date
+					created_at: date,
 				};
-			})
+			}),
 		)
 		.execute();
 

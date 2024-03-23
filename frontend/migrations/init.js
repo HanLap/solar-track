@@ -10,20 +10,22 @@ export async function up(db) {
 		.addColumn('addr', 'integer', (column) => column.notNull())
 		.addColumn('name', 'varchar', (column) => column.notNull())
 		.addColumn('ivmax', 'integer', (column) => column.notNull())
-		.execute()
+		.execute();
 
 	await db.schema
 		.createTable('measurement')
 		.addColumn('id', 'integer', (column) => column.primaryKey())
 		.addColumn('inverter_id', 'integer', (column) =>
-			column.notNull().references('inverter.id').onDelete('cascade')
+			column.notNull().references('inverter.id').onDelete('cascade'),
 		)
 		.addColumn('pac', 'decimal', (column) => column.notNull())
 		.addColumn('pdc', 'decimal', (column) => column.notNull())
 		.addColumn('kdy', 'decimal', (column) => column.notNull())
 		.addColumn('kt0', 'decimal', (column) => column.notNull())
 		.addColumn('fdat', 'datetime', (column) => column.notNull())
-		.addColumn('created_at', 'datetime', (column) => column.notNull().defaultTo(sql`CURRENT_TIMESTAMP`))
+		.addColumn('created_at', 'datetime', (column) =>
+			column.notNull().defaultTo(sql`CURRENT_TIMESTAMP`),
+		)
 		.execute();
 }
 

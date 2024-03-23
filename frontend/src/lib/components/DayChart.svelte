@@ -1,110 +1,59 @@
 <script lang="ts">
-	import { ProgressBar } from '@skeletonlabs/skeleton';
-	import {
-		CategoryScale,
-		Chart as ChartJS,
-		Colors,
-		Legend,
-		LineElement,
-		LinearScale,
-		PointElement,
-		TimeScale,
-		TimeSeriesScale,
-		Title,
-		Tooltip,
-		_adapters
-	} from 'chart.js';
-	import 'chartjs-adapter-date-fns';
-	import * as datefns from 'date-fns';
-	import de from 'date-fns/locale/de/index.js';
-	import { Line } from 'svelte-chartjs';
+	import { chart } from '$lib/chartAction';
+	import { Progress } from '$lib/ui/progress';
+	import { mode } from 'mode-watcher';
+	import { CalendarDate, DateFormatter, ZonedDateTime } from '@internationalized/date';
+	import type { ApexOptions } from 'apexcharts';
 
-	ChartJS.register(
-		Title,
-		Colors,
-		Tooltip,
-		Legend,
-		LineElement,
-		LinearScale,
-		PointElement,
-		CategoryScale,
-		TimeScale,
-		TimeSeriesScale
-	);
+	const df = new DateFormatter('de-DE', {
+		hour: '2-digit',
+		minute: '2-digit',
+	});
 
 	export let ivmax: number;
-	export let day: Date;
+	export let date: CalendarDate;
 	export let lines: { name: string; data: { x: string; y: number }[] }[];
 	export let loading: boolean;
 
-	_adapters._date.override({
-		..._adapters._date,
-		formats: function () {
-			return {
-				minute: 'HH:mm',
-				hour: 'HH:mm'
-			};
-		}
-	});
-
-	$: chartdata = {
-		datasets: lines.map(({ name, data }) => ({
-			label: name,
-			bezierCurve: true,
-			lineTension: 0,
-			pointRadius: 0,
-			data
-		}))
-	};
+	$: options = {
+		chart: {
+			type: 'line',
+			animations: {
+				enabled: false,
+			},
+			toolbar: {
+				show: false,
+			},
+			background: 'transparent',
+		},
+		series: lines,
+		yaxis: {
+			decimalsInFloat: 0,
+			min: 0,
+			max: ivmax,
+		},
+		xaxis: {
+			type: 'datetime',
+			min: new ZonedDateTime(date.year, date.month, date.day, 'de-DE', 0, 3).toDate().getTime(),
+			max: new ZonedDateTime(date.year, date.month, date.day, 'de-DE', 0, 23).toDate().getTime(),
+			labels: {
+				format: 'HH:mm',
+			},
+		},
+		theme: {
+			mode: $mode,
+			palette: 'palette4',
+		},
+	} satisfies ApexOptions;
 </script>
 
-<div class="w-[70rem] max-w-full relative max-h-full">
+<div class="relative max-h-full w-[70rem] max-w-full">
 	{#if loading}
-		<div class="absolute h-full w-full backdrop-blur flex items-center p-20">
-			<ProgressBar meter="bg-primary-500" track="bf-primary-500/30" />
+		<div class="absolute flex h-full w-full items-center p-20 backdrop-blur">
+			<Progress />
 		</div>
 	{/if}
-	<Line
-		data={chartdata}
-		options={{
-			animation: {
-				duration: 0
-			},
-			spanGaps: 1000 * 60 * 60, // 1 hour
-			responsive: true,
-			scales: {
-				x: {
-					type: 'time',
-					time: {
-						unit: 'hour'
-					},
-					adapters: {
-						date: {
-							locale: de
-						}
-					},
-					bounds: 'ticks',
-					ticks: {
-						stepSize: 1,
-						autoSkip: true,
-						maxRotation: 0,
-						major: {
-							enabled: true
-						}
-					},
-					min: datefns.format(datefns.set(day, { hours: 3 }), 'yyyy-MM-dd HH:mm:ss'),
-					max: datefns.format(datefns.set(day, { hours: 23 }), 'yyyy-MM-dd HH:mm:ss')
-				},
-				y: {
-					display: true,
-					beginAtZero: true,
-					title: {
-						display: true,
-						text: 'Watt'
-					},
-					max: ivmax
-				}
-			}
-		}}
-	/>
+	{#key $mode}
+		<div use:chart={options} />
+	{/key}
 </div>

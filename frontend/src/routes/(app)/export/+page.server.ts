@@ -1,9 +1,9 @@
 import type { Database } from '$lib/server/db/Database';
 import { db } from '$lib/server/db/db';
+import { parseDate } from '@internationalized/date';
 import { fail } from '@sveltejs/kit';
 import { sql, type SelectExpression } from 'kysely';
 import type { Actions } from './$types';
-import * as datefns from 'date-fns';
 
 export async function load() {
 	return {};
@@ -17,7 +17,8 @@ export const actions: Actions = {
 		const formatString = formData.get('format') as string;
 		const format = formatString.split(',');
 
-		const end = datefns.format(datefns.addDays(new Date(endStr), 1), 'yyyy-MM-dd');
+		const end = parseDate(endStr).add({ days: 1 }).toString();
+		console.log(start, endStr, format);
 
 		for (const f of format) {
 			if (!['date', 'pac', 'pdc', 'kdy', 'kt0'].includes(f)) {
@@ -47,7 +48,7 @@ export const actions: Actions = {
 			.select(select)
 			.innerJoin('inverter', 'inverter.id', 'measurement.inverter_id')
 			.where('inverter.plant_id', '=', 1)
-			.where(sql`created_at between ${start} and ${end}`)
+			.where((eb) => eb.between('created_at', start, end))
 			.groupBy('created_at')
 			.execute();
 
@@ -59,5 +60,5 @@ export const actions: Actions = {
 		csv = `${formatString}\n` + csv;
 
 		return { csv };
-	}
+	},
 };

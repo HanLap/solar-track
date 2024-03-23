@@ -19,7 +19,13 @@
   ],
   "settings": {
     "[svelte]": {
-      "editor.defaultFormatter": "svelte.svelte-vscode"
-    }
+      "editor.defaultFormatter": "svelte.svelte-vscode",
+      "editor.rulers": [
+        100
+      ],
+      "editor.wordWrapColumn": 100,
+      "editor.wordWrap": "wordWrapColumn"
+    },
+    "asciidoc.antora.enableAntoraSupport": false
   }
 }

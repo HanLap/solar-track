@@ -9,7 +9,7 @@ const schema = zfd.formData({
 	ip: z.string().ip({ version: 'v4' }),
 	port: z.number().int().min(1).max(65535),
 	startAddr: z.number().int().min(0).max(65535),
-	endAddr: z.number().int().min(0).max(65535)
+	endAddr: z.number().int().min(0).max(65535),
 });
 
 export const actions = {
@@ -29,5 +29,5 @@ export const actions = {
 		}
 
 		redirect(304, '/');
-	}
+	},
 };
