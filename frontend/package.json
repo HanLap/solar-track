@@ -1,7 +1,8 @@
 {
-	"name": "max-talk-svelte",
+	"name": "frontend",
 	"version": "0.0.1",
 	"private": true,
+	"type": "module",
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build",
@@ -11,6 +12,15 @@
 		"lint": "prettier --ignore-path=../.prettierignore --check . && eslint ./src",
 		"format": "prettier --ignore-path=../.prettierignore --write .",
 		"scn:add": "shadcn-svelte add"
+	},
+	"dependencies": {
+		"better-sqlite3": "^9.4.3",
+		"date-fns": "^2.30.0",
+		"date-fns-tz": "^2.0.1",
+		"dotenv": "^16.4.5",
+		"kysely": "^0.27.3",
+		"zod": "^3.22.4",
+		"zod-form-data": "^2.0.2"
 	},
 	"devDependencies": {
 		"@internationalized/date": "^3.5.2",
@@ -47,14 +57,9 @@
 		"vite": "^5.1.6",
 		"vite-plugin-tailwind-purgecss": "^0.2.0"
 	},
-	"type": "module",
-	"dependencies": {
-		"better-sqlite3": "^9.4.3",
-		"date-fns": "^2.30.0",
-		"date-fns-tz": "^2.0.1",
-		"dotenv": "^16.4.5",
-		"kysely": "^0.27.3",
-		"zod": "^3.22.4",
-		"zod-form-data": "^2.0.2"
-	}
+	"files": [
+		"build",
+		"migrate.js",
+		"migrations"
+	]
 }
