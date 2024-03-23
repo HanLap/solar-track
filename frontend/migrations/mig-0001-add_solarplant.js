@@ -38,7 +38,6 @@ export async function up(db) {
 		.updateTable('inverter')
 		.set({ plant_id: sql`(select id from solar_plant)` })
 		.execute();
-	console.log('blub');
 
 	await db.schema
 		.createTable('inverter_tmp')
