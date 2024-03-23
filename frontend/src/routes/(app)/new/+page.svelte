@@ -1,10 +1,10 @@
 <script lang="ts">
 </script>
 
-<div class="flex flex-col justify-center mx-0 md:mx-10 mt-4">
+<div class="mx-0 mt-4 flex flex-col justify-center md:mx-10">
 	<h3 class="h3 font-bold">Neue Solaranlage erstellen</h3>
 
-	<form class="mx-auto gap-5 flex flex-col mt-4">
+	<form class="mx-auto mt-4 flex flex-col gap-5">
 		<label class="label w-80">
 			<span>Name:</span>
 			<input class="input" type="text" name="name" value="" />

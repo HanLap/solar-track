@@ -1,26 +1,25 @@
 <script lang="ts">
 	import { beforeNavigate, goto, invalidateAll } from '$app/navigation';
-	import DateInput from '$lib/components/DateInput.svelte';
+	import CurrentLoad from '$lib/components/CurrentLoad.svelte';
+	import DatePicker from '$lib/components/DatePicker.svelte';
 	import DayChart from '$lib/components/DayChart.svelte';
-	import { ProgressBar } from '@skeletonlabs/skeleton';
-	import * as datefns from 'date-fns';
+	import { Button } from '$lib/ui/button/index.js';
+	import { parseDate, type DateValue } from '@internationalized/date';
 	import { onMount } from 'svelte';
+	// import DayChart from '$lib/components/DayChart.svelte';
 
+	// const { data } = $props();
 	export let data;
 
-	$: day = datefns.parse(data.day, 'yyyy-MM-dd', new Date());
-
-	function handleDayChange(event: CustomEvent<Date>) {
-		goto(`?day=${datefns.format(event.detail, 'yyyy-MM-dd')}`);
-	}
+	$: date = parseDate(data.day);
 
 	beforeNavigate(({ from, to }) => {
 		if (from?.url?.href === to?.url?.href) {
 			return;
 		}
 
-		data.loading = true;
-		data.lines = [];
+		// data.loading = true;
+		// data.lines = [];
 	});
 
 	onMount(() => {
@@ -36,33 +35,20 @@
 
 <div class="flex h-full w-full">
 	<div class="flex flex-1 flex-col gap-8 px-0 py-8 lg:px-20">
-		<div class="flex flex-row justify-center gap-4">
-			<a href="." class="btn btn-sm variant-filled-primary">Heute</a>
+		<!-- <div class="flex flex-row justify-center gap-4">
+			<Button href=".">Heute</Button>
 
-			<DateInput date={day} on:change={handleDayChange} arrows />
+			<DatePicker {date} on:valueChange={handleDateChange} class="w-40" />
 
-			<a href="/export" class="btn btn-sm variant-ghost-primary">Daten Exportieren</a>
-		</div>
+			<Button href="/export" variant="outline">Daten Exportieren</Button>
+		</div> -->
 
 		<div class="relative flex flex-1 justify-center">
-			<DayChart {day} ivmax={data.ivmax} lines={data.lines} loading={data.loading} />
+			<DayChart {date} ivmax={data.ivmax} lines={data.lines} loading={data.loading} />
 		</div>
-		<div class="flex w-full flex-col items-center justify-center gap-2">
-			<div class="w-[40rem] max-w-full">
-				<div class="flex justify-between px-4 py-1">
-					<span> Momentane Auslastung: </span>
-
-					<span>{Math.round(((data.load ?? 0) / data.ivmax) * 100)}%</span>
-				</div>
-				<ProgressBar
-					label="Progress Bar"
-					value={data.load ?? 0}
-					max={data.ivmax}
-					meter="bg-primary-600-300-token"
-					track="bg-primary-300-600-token"
-				/>
-			</div>
-		</div>
+		{#await data.load then load}
+			<CurrentLoad load={load ?? 0} ivmax={data.ivmax} />
+		{/await}
 
 		<!-- <form method="post" class="" use:enhance>
 		<button type="submit" formaction="?/getInverters" class="btn btn-sm variant-filled-primary">
