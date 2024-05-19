@@ -18,9 +18,11 @@
 
 <ModeWatcher />
 
+<div class="h-screen w-screen flex flex-col">
 <AppHeader />
 {#key data.header.pathname}
-	<div in:fly={transitionIn} out:fly={transitionOut} class="h-full">
+	<div in:fly={transitionIn} out:fly={transitionOut} class="h-full w-full flex-1">
 		<slot />
 	</div>
 {/key}
+</div>

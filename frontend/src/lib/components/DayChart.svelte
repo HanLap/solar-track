@@ -47,13 +47,13 @@
 	} satisfies ApexOptions;
 </script>
 
-<div class="relative max-h-full w-[70rem] max-w-full">
+<div class="max-w-screen relative flex max-h-full w-[70rem] justify-center">
 	{#if loading}
 		<div class="absolute flex h-full w-full items-center p-20 backdrop-blur">
 			<Progress />
 		</div>
 	{/if}
 	{#key $mode}
-		<div use:chart={options} />
+		<div use:chart={options} class="w-full"/>
 	{/key}
 </div>

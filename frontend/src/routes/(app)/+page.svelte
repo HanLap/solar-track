@@ -33,9 +33,8 @@
 	});
 </script>
 
-<div class="flex h-full w-full">
-	<div class="flex flex-1 flex-col gap-8 px-0 py-8 lg:px-20">
-		<!-- <div class="flex flex-row justify-center gap-4">
+<div class="flex h-full flex-1 flex-col gap-8 px-4 py-8 lg:px-20">
+	<!-- <div class="flex flex-row justify-center gap-4">
 			<Button href=".">Heute</Button>
 
 			<DatePicker {date} on:valueChange={handleDateChange} class="w-40" />
@@ -43,17 +42,16 @@
 			<Button href="/export" variant="outline">Daten Exportieren</Button>
 		</div> -->
 
-		<div class="relative flex flex-1 justify-center">
-			<DayChart {date} ivmax={data.ivmax} lines={data.lines} loading={data.loading} />
-		</div>
-		{#await data.load then load}
-			<CurrentLoad load={load ?? 0} ivmax={data.ivmax} />
-		{/await}
+	<div class="relative flex lg:flex-1 justify-center">
+		<DayChart {date} ivmax={data.ivmax} lines={data.lines} loading={data.loading} />
+	</div>
+	{#await data.load then load}
+		<CurrentLoad load={load ?? 0} ivmax={data.ivmax} />
+	{/await}
 
-		<!-- <form method="post" class="" use:enhance>
+	<!-- <form method="post" class="" use:enhance>
 		<button type="submit" formaction="?/getInverters" class="btn btn-sm variant-filled-primary">
 			get inverters
 		</button>
 	</form> -->
-	</div>
 </div>
