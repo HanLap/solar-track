@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  frontend:
+    build: 
+      target: frontend
+    expose:
+      - 3000
+    environment:
+      API_PATH: http://solarmax-service:8000
+      DB_PATH: /data/data.db
+      ORIGIN: http://localhost
+    volumes: 
+      - ./data:/data:rw
+  solarmax-service:
+    build: 
+      target: solarmax-service   
+  update-scheduler: 
+    build: 
+      target: update-scheduler   
+    depends_on:
+      - frontend
+    environment:
+      API_PATH: http://frontend:3000
+      CRON_PATTERN: "0 * * * * *"
