@@ -42,12 +42,13 @@
 			<Button href="/export" variant="outline">Daten Exportieren</Button>
 		</div> -->
 
-	<div class="relative flex lg:flex-1 justify-center">
-		<DayChart {date} ivmax={data.ivmax} lines={data.lines} loading={data.loading} />
-	</div>
 	{#await data.load then load}
 		<CurrentLoad load={load ?? 0} ivmax={data.ivmax} />
 	{/await}
+
+	<div class="relative flex lg:flex-1 justify-center">
+		<DayChart {date} ivmax={data.ivmax} lines={data.lines} loading={data.loading} />
+	</div>
 
 	<!-- <form method="post" class="" use:enhance>
 		<button type="submit" formaction="?/getInverters" class="btn btn-sm variant-filled-primary">
