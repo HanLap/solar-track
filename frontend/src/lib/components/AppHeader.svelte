@@ -1,21 +1,21 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { page } from '$app/stores';
-	import { Button } from '$lib/ui/button';
-	import { ThemeSwitcher } from '$lib/ui/theme-switcher';
-	import { parseDate, type DateValue } from '@internationalized/date';
+	import { page } from '$app/state';
+	import { Button } from '$lib/components/ui/button';
+	import { ThemeSwitcher } from '$lib/components/ui/theme-switcher';
+	import { type DateValue, parseDate } from '@internationalized/date';
 	import DatePicker from './DatePicker.svelte';
 	import { fade } from 'svelte/transition';
 	import { cubicInOut } from 'svelte/easing';
 
-	$: day = $page.data?.day;
+	let day = $derived(page.data?.day);
 
-	$: date = day && parseDate(day);
+	let date = $derived(day && parseDate(day));
 
-	function handleDateChange(e: CustomEvent<{ value: DateValue | undefined }>) {
-		if (!e.detail.value) return;
+	function handleDateChange(value: DateValue | undefined) {
+		if (!value) return;
 
-		goto(`?day=${e.detail.value.toString()}`);
+		goto(`?day=${value.toString()}`);
 	}
 </script>
 
@@ -32,7 +32,7 @@
 		>
 			<Button href=".">Heute</Button>
 
-			<DatePicker {date} on:valueChange={handleDateChange} />
+			<DatePicker value={date} onValueChange={handleDateChange} />
 		</div>
 	{/if}
 

@@ -1,7 +1,9 @@
 <script lang="ts">
+	import { run } from 'svelte/legacy';
+
 	import { enhance } from '$app/forms';
-	import { Button } from '$lib/ui/button';
-	import * as Tabs from '$lib/ui/tabs';
+	import { Button } from '$lib/components/ui/button';
+	import * as Tabs from '$lib/components/ui/tabs';
 	import { download } from '$lib/utils';
 	import { CalendarDate, today } from '@internationalized/date';
 	import type { SubmitFunction } from '@sveltejs/kit';
@@ -12,20 +14,27 @@
 
 	const exportModes = {
 		Day: { id: 'day', text: 'Tag' },
-		Span: { id: 'dayspan', text: 'Zeitraum' },
+		Span: { id: 'dayspan', text: 'Zeitraum' }
 	};
-	let selectedTab = exportModes.Day.id;
+	let selectedTab = $state(exportModes.Day.id);
 
-	let end = today('UTC');
-	let start = end.subtract({ days: 3 });
-	let rowCount: number | undefined = undefined;
-	let fetchingRowCount: boolean = false;
+	let end = $state(today('UTC'));
+	let start = $state(today('UTC'));
+	let rowCount: number | undefined = $state(undefined);
+	let fetchingRowCount: boolean = $state(false);
 
-	let selectedCols: DataItem[] | undefined;
-
-	$: {
-		handleFetchRows(start, end);
-	}
+	let selectedCols: DataItem[] = $state([
+		{
+			id: 'date',
+			desc: 'Datum',
+			example: '2021-01-01 08:30:00'
+		},
+		{
+			id: 'pac',
+			desc: 'PAC',
+			example: '6000.3'
+		}
+	]);
 
 	const handleFormSubmit: SubmitFunction = () => {
 		return ({ result, update }) => {
@@ -40,6 +49,14 @@
 		};
 	};
 
+	function handleTabSwitch(value: string) {
+		if (value === exportModes.Day.id) {
+			start = end;
+		} else {
+			start = end.subtract({ days: 3 });
+		}
+	}
+
 	async function handleFetchRows(start: CalendarDate, end: CalendarDate) {
 		fetchingRowCount = true;
 		try {
@@ -52,11 +69,15 @@
 		}
 		fetchingRowCount = false;
 	}
+
+	$effect(() => {
+		handleFetchRows(start, end);
+	});
 </script>
 
 <div class="mx-auto max-w-[30rem] py-6">
 	<h2 class="text-2xl">Daten als CSV-Datei exportieren</h2>
-	<Tabs.Root bind:value={selectedTab} class="w-full py-6">
+	<Tabs.Root bind:value={selectedTab} onValueChange={handleTabSwitch} class="w-full py-6">
 		<Tabs.List class="grid w-full grid-cols-2">
 			<Tabs.Trigger value={exportModes.Day.id}>Tag</Tabs.Trigger>
 			<Tabs.Trigger value={exportModes.Span.id}>Zeitraum</Tabs.Trigger>

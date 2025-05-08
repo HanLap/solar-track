@@ -11,7 +11,7 @@
 		</label>
 		<label class="label w-80">
 			<span>Beschreibung:</span>
-			<textarea class="textarea" name="description" value="" />
+			<textarea class="textarea" name="description" value=""></textarea>
 		</label>
 		<div class="flex gap-4">
 			<label class="label w-32">

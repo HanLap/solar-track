@@ -1,17 +1,13 @@
 <script lang="ts">
-	import { beforeNavigate, goto, invalidateAll } from '$app/navigation';
+	import { beforeNavigate, invalidateAll } from '$app/navigation';
 	import CurrentLoad from '$lib/components/CurrentLoad.svelte';
-	import DatePicker from '$lib/components/DatePicker.svelte';
 	import DayChart from '$lib/components/DayChart.svelte';
-	import { Button } from '$lib/ui/button/index.js';
-	import { parseDate, type DateValue } from '@internationalized/date';
+	import { parseDate } from '@internationalized/date';
 	import { onMount } from 'svelte';
-	// import DayChart from '$lib/components/DayChart.svelte';
 
-	// const { data } = $props();
-	export let data;
+	let { data } = $props();
 
-	$: date = parseDate(data.day);
+	let date = $derived(parseDate(data.day));
 
 	beforeNavigate(({ from, to }) => {
 		if (from?.url?.href === to?.url?.href) {
@@ -46,7 +42,7 @@
 		<CurrentLoad load={load ?? 0} ivmax={data.ivmax} />
 	{/await}
 
-	<div class="relative flex lg:flex-1 justify-center">
+	<div class="relative flex justify-center lg:flex-1">
 		<DayChart {date} ivmax={data.ivmax} lines={data.lines} loading={data.loading} />
 	</div>
 

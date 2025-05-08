@@ -1,50 +1,49 @@
 <script lang="ts">
 	import { chart } from '$lib/chartAction';
-	import { Progress } from '$lib/ui/progress';
-	import { mode } from 'mode-watcher';
-	import { CalendarDate, DateFormatter, ZonedDateTime } from '@internationalized/date';
+	import { Progress } from '$lib/components/ui/progress';
+	import { CalendarDate, ZonedDateTime } from '@internationalized/date';
 	import type { ApexOptions } from 'apexcharts';
+	import { mode } from 'mode-watcher';
 
-	const df = new DateFormatter('de-DE', {
-		hour: '2-digit',
-		minute: '2-digit',
-	});
+	interface Props {
+		ivmax: number;
+		date: CalendarDate;
+		lines: { name: string; data: { x: string; y: number }[] }[];
+		loading: boolean;
+	}
 
-	export let ivmax: number;
-	export let date: CalendarDate;
-	export let lines: { name: string; data: { x: string; y: number }[] }[];
-	export let loading: boolean;
+	let { ivmax, date, lines, loading }: Props = $props();
 
-	$: options = {
+	let options = $derived({
 		chart: {
 			type: 'line',
 			animations: {
-				enabled: false,
+				enabled: false
 			},
 			toolbar: {
-				show: false,
+				show: false
 			},
-			background: 'transparent',
+			background: 'transparent'
 		},
 		series: lines,
 		yaxis: {
 			decimalsInFloat: 0,
 			min: 0,
-			max: ivmax,
+			max: ivmax
 		},
 		xaxis: {
 			type: 'datetime',
 			min: new ZonedDateTime(date.year, date.month, date.day, 'de-DE', 0, 3).toDate().getTime(),
 			max: new ZonedDateTime(date.year, date.month, date.day, 'de-DE', 0, 23).toDate().getTime(),
 			labels: {
-				format: 'HH:mm',
-			},
+				format: 'HH:mm'
+			}
 		},
 		theme: {
-			mode: $mode,
-			palette: 'palette4',
-		},
-	} satisfies ApexOptions;
+			mode: mode.current,
+			palette: 'palette4'
+		}
+	} satisfies ApexOptions);
 </script>
 
 <div class="max-w-screen relative flex max-h-full w-[70rem] justify-center">
@@ -53,7 +52,7 @@
 			<Progress />
 		</div>
 	{/if}
-	{#key $mode}
-		<div use:chart={options} class="w-full"/>
+	{#key mode.current}
+		<div use:chart={options} class="w-full"></div>
 	{/key}
 </div>

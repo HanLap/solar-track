@@ -1,51 +1,60 @@
 <script lang="ts">
-	import { Button } from '$lib/ui/button';
-	import * as Popover from '$lib/ui/popover';
-	import RangeCalendar from '$lib/ui/range-calendar/range-calendar.svelte';
-	import { cn } from '$lib/utils';
-	import { DateFormatter, getLocalTimeZone, today } from '@internationalized/date';
+	import CalendarIcon from '@lucide/svelte/icons/calendar';
 	import type { DateRange } from 'bits-ui';
-	import { ArrowBigRight, CalendarIcon, MoveRight } from 'lucide-svelte';
-	import { createEventDispatcher } from 'svelte';
+	import {
+		CalendarDate,
+		DateFormatter,
+		type DateValue,
+		getLocalTimeZone
+	} from '@internationalized/date';
+	import { cn } from '$lib/utils.js';
+	import { buttonVariants } from '$lib/components/ui/button/index.js';
+	import { RangeCalendar } from '$lib/components/ui/range-calendar/index.js';
+	import * as Popover from '$lib/components/ui/popover/index.js';
 
-	const df = new DateFormatter('de-DE', {
-		dateStyle: 'long',
+	const df = new DateFormatter('en-US', {
+		dateStyle: 'medium'
 	});
 
-	export let value: DateRange = {
-		start: today(getLocalTimeZone()),
-		end: today(getLocalTimeZone()),
-	};
-	let className: string | undefined = undefined;
-	export { className as class };
-
-	const dispatchEvent = createEventDispatcher();
-
-	function onValueChange(value: DateRange | undefined) {
-		dispatchEvent('valueChange', { value });
+	interface Props {
+		value: DateRange;
+		onValueChange: (value: DateRange) => void;
 	}
+
+	let { value = $bindable(), onValueChange }: Props = $props();
+
+	let startValue: DateValue | undefined = $state(undefined);
 </script>
 
-<Popover.Root openFocus>
-	<Popover.Trigger asChild let:builder>
-		<Button
-			variant="outline"
-			class={cn(
-				'w-96 min-w-fit justify-start text-left font-normal',
-				!(value.start && value.end) && 'text-muted-foreground',
-				className,
-			)}
-			builders={[builder]}
+<div class="grid gap-2">
+	<Popover.Root>
+		<Popover.Trigger
+			class={cn(buttonVariants({ variant: 'outline' }), !value && 'text-muted-foreground')}
 		>
-			<CalendarIcon class="mr-2 h-4 w-4" />
-			<span class="grid w-full grid-cols-[1fr,min-content,1fr] items-center justify-between gap-2">
-				{value.start ? df.format(value.start.toDate(getLocalTimeZone())) : 'Startdatum'}
-				<MoveRight class="w-4" />
-				{value.end ? df.format(value.end.toDate(getLocalTimeZone())) : 'Endatum'}
-			</span>
-		</Button>
-	</Popover.Trigger>
-	<Popover.Content class="w-auto p-0">
-		<RangeCalendar bind:value initialFocus locale="de-DE" {onValueChange} />
-	</Popover.Content>
-</Popover.Root>
+			<CalendarIcon class="mr-2 size-4" />
+			{#if value && value.start}
+				{#if value.end}
+					{df.format(value.start.toDate(getLocalTimeZone()))} - {df.format(
+						value.end.toDate(getLocalTimeZone())
+					)}
+				{:else}
+					{df.format(value.start.toDate(getLocalTimeZone()))}
+				{/if}
+			{:else if startValue}
+				{df.format(startValue.toDate(getLocalTimeZone()))}
+			{:else}
+				Pick a date
+			{/if}
+		</Popover.Trigger>
+		<Popover.Content class="w-auto p-0" align="start">
+			<RangeCalendar
+				bind:value
+				onStartValueChange={(v) => {
+					startValue = v;
+				}}
+				numberOfMonths={2}
+				{onValueChange}
+			/>
+		</Popover.Content>
+	</Popover.Root>
+</div>

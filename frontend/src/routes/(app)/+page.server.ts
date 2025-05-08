@@ -16,7 +16,7 @@ export const actions: Actions = {
 		const inverters = (await SolarApi.getInverters(fetch)).map((i) => ({
 			name: i.ivname as string,
 			addr: i.addr as number,
-			ivmax: i.ivmax as number,
+			ivmax: i.ivmax as number
 		}));
 
 		await db.transaction().execute(async (tx) => {
@@ -40,17 +40,17 @@ export const actions: Actions = {
 							.updateTable('inverter')
 							.set({
 								name: i.name,
-								ivmax: i.ivmax,
+								ivmax: i.ivmax
 							})
 							.where('addr', '=', i.addr)
 							.execute();
 					}
-				}),
+				})
 			]);
 		});
 	},
 
 	async getMeasurement() {
 		await MeasurmentService.createMeasurement();
-	},
+	}
 };

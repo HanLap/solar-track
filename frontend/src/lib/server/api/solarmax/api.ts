@@ -1,5 +1,5 @@
 import { env } from '$env/dynamic/private';
-import type { MeasurementResponse, getInvertersResponse as GetInvertersResponse } from './Models';
+import type { getInvertersResponse as GetInvertersResponse, MeasurementResponse } from './Models';
 
 async function get(fetchFn: typeof fetch, path: string) {
 	const response = await fetchFn(`${env.API_PATH}${path}`);

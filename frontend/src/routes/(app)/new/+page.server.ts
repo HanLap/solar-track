@@ -1,7 +1,7 @@
-import { zfd } from 'zod-form-data';
-import { z } from 'zod';
-import { fail, redirect } from '@sveltejs/kit';
 import { db } from '$lib/server/db/db.js';
+import { fail, redirect } from '@sveltejs/kit';
+import { z } from 'zod';
+import { zfd } from 'zod-form-data';
 
 const schema = zfd.formData({
 	name: zfd.text(),
@@ -9,7 +9,7 @@ const schema = zfd.formData({
 	ip: z.string().ip({ version: 'v4' }),
 	port: z.number().int().min(1).max(65535),
 	startAddr: z.number().int().min(0).max(65535),
-	endAddr: z.number().int().min(0).max(65535),
+	endAddr: z.number().int().min(0).max(65535)
 });
 
 export const actions = {
@@ -25,9 +25,10 @@ export const actions = {
 		try {
 			await db.insertInto('solar_plant').values(data).executeTakeFirstOrThrow();
 		} catch (e) {
+			console.error(e);
 			return fail(500);
 		}
 
 		redirect(304, '/');
-	},
+	}
 };

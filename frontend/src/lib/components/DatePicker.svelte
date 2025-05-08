@@ -1,43 +1,40 @@
 <script lang="ts">
-	import { Button } from '$lib/ui/button';
-	import { Calendar } from '$lib/ui/calendar';
-	import * as Popover from '$lib/ui/popover';
-	import { cn } from '$lib/utils';
-	import { DateFormatter, getLocalTimeZone, type DateValue } from '@internationalized/date';
-	import { CalendarIcon } from 'lucide-svelte';
-	import { createEventDispatcher } from 'svelte';
+	import { Button } from '$lib/components/ui/button/index.js';
+	import { Calendar } from '$lib/components/ui/calendar/index.js';
+	import * as Popover from '$lib/components/ui/popover/index.js';
+	import { cn } from '$lib/utils.js';
+	import { CalendarDate, DateFormatter, type DateValue, getLocalTimeZone } from '@internationalized/date';
+	import CalendarIcon from '@lucide/svelte/icons/calendar';
 
-	const df = new DateFormatter('de-DE', {
-		dateStyle: 'long',
+	const df = new DateFormatter('en-US', {
+		dateStyle: 'long'
 	});
 
-	export let date: DateValue | undefined;
-	let className: string | undefined = undefined;
-	export { className as class };
-
-	const dispatchEvent = createEventDispatcher();
-
-	function onValueChange(value: DateValue | undefined) {
-		dispatchEvent('valueChange', { value });
+	interface Props {
+		value: CalendarDate;
+		onValueChange: (value: DateValue | undefined) => void;
 	}
+
+	let { value = $bindable(), onValueChange }: Props = $props();
 </script>
 
-<Popover.Root openFocus>
-	<Popover.Trigger asChild let:builder>
-		<Button
-			variant="outline"
-			class={cn(
-				'w-52 min-w-fit justify-start text-left font-normal',
-				!date && 'text-muted-foreground',
-				className,
-			)}
-			builders={[builder]}
-		>
-			<CalendarIcon class="mr-2 h-4 w-4" />
-			{date ? df.format(date.toDate(getLocalTimeZone())) : 'Datum auswählen'}
-		</Button>
+<Popover.Root>
+	<Popover.Trigger>
+		{#snippet child({ props })}
+			<Button
+				variant="outline"
+				class={cn(
+					'w-[280px] justify-start text-left font-normal',
+					!value && 'text-muted-foreground'
+				)}
+				{...props}
+			>
+				<CalendarIcon class="mr-2 size-4" />
+				{value ? df.format(value.toDate(getLocalTimeZone())) : 'Select a date'}
+			</Button>
+		{/snippet}
 	</Popover.Trigger>
-	<Popover.Content class="w-auto p-0" aria-modal>
-		<Calendar bind:value={date} initialFocus locale="de-DE" {onValueChange} />
+	<Popover.Content class="w-auto p-0">
+		<Calendar bind:value {onValueChange} type="single" initialFocus />
 	</Popover.Content>
 </Popover.Root>
