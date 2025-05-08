@@ -48,7 +48,7 @@
 
 <div class="max-w-screen relative flex max-h-full w-[70rem] justify-center">
 	{#if loading}
-		<div class="absolute flex h-full w-full items-center p-20 backdrop-blur">
+		<div class="absolute flex h-full w-full items-center p-20 backdrop-blur-sm">
 			<Progress />
 		</div>
 	{/if}

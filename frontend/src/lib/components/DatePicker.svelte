@@ -3,7 +3,12 @@
 	import { Calendar } from '$lib/components/ui/calendar/index.js';
 	import * as Popover from '$lib/components/ui/popover/index.js';
 	import { cn } from '$lib/utils.js';
-	import { CalendarDate, DateFormatter, type DateValue, getLocalTimeZone } from '@internationalized/date';
+	import {
+		CalendarDate,
+		DateFormatter,
+		type DateValue,
+		getLocalTimeZone
+	} from '@internationalized/date';
 	import CalendarIcon from '@lucide/svelte/icons/calendar';
 
 	const df = new DateFormatter('en-US', {
