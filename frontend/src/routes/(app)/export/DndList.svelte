@@ -25,7 +25,7 @@
 		items,
 		flipDurationMs,
 		centreDraggedOnCursor: true,
-		dropTargetClasses: ['!border-primary'],
+		dropTargetClasses: ['border-primary!'],
 		dropTargetStyle: {}
 	}}
 	onconsider={handleSort}
