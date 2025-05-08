@@ -16,7 +16,7 @@ export async function up(db) {
 		.createTable('measurement')
 		.addColumn('id', 'integer', (column) => column.primaryKey())
 		.addColumn('inverter_id', 'integer', (column) =>
-			column.notNull().references('inverter.id').onDelete('cascade'),
+			column.notNull().references('inverter.id').onDelete('cascade')
 		)
 		.addColumn('pac', 'decimal', (column) => column.notNull())
 		.addColumn('pdc', 'decimal', (column) => column.notNull())
@@ -24,7 +24,7 @@ export async function up(db) {
 		.addColumn('kt0', 'decimal', (column) => column.notNull())
 		.addColumn('fdat', 'datetime', (column) => column.notNull())
 		.addColumn('created_at', 'datetime', (column) =>
-			column.notNull().defaultTo(sql`CURRENT_TIMESTAMP`),
+			column.notNull().defaultTo(sql`CURRENT_TIMESTAMP`)
 		)
 		.execute();
 }

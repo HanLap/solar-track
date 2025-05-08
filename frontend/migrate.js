@@ -14,8 +14,8 @@ const command = process.argv[2];
 
 const db = new Kysely({
 	dialect: new SqliteDialect({
-		database: new Database(dbPath),
-	}),
+		database: new Database(dbPath)
+	})
 });
 
 const migrationFolder = path.join(process.env.PWD, '/migrations');
@@ -27,8 +27,8 @@ const migrator = new Migrator({
 	provider: new FileMigrationProvider({
 		fs,
 		path,
-		migrationFolder,
-	}),
+		migrationFolder
+	})
 });
 
 let res;

@@ -1,10 +1,14 @@
 <script lang="ts">
-	import { Progress } from '$lib/ui/progress';
+	import { Progress } from '$lib/components/ui/progress';
 
-	export let load: number;
-	export let ivmax: number;
+	interface Props {
+		load: number;
+		ivmax: number;
+	}
 
-	$: roundedLoad = (Math.round(load * 10) / 10).toFixed(1)
+	let { load, ivmax }: Props = $props();
+
+	let roundedLoad = $derived((Math.round(load * 10) / 10).toFixed(1));
 </script>
 
 <div class="flex w-full flex-col items-center justify-center gap-2">

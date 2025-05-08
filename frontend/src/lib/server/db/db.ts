@@ -11,5 +11,5 @@ await fs.mkdir(dbDir, { recursive: true });
 
 export const db = new Kysely<DatabaseModel>({
 	// Use MysqlDialect for MySQL and SqliteDialect for SQLite.
-	dialect: new SqliteDialect({ database: new Database(env.DB_PATH ?? './data/data.db') }),
+	dialect: new SqliteDialect({ database: new Database(env.DB_PATH ?? './data/data.db') })
 });

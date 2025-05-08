@@ -18,7 +18,6 @@ export const actions: Actions = {
 		const format = formatString.split(',');
 
 		const end = parseDate(endStr).add({ days: 1 }).toString();
-		console.log(start, endStr, format);
 
 		for (const f of format) {
 			if (!['date', 'pac', 'pdc', 'kdy', 'kt0'].includes(f)) {
@@ -60,5 +59,5 @@ export const actions: Actions = {
 		csv = `${formatString}\n` + csv;
 
 		return { csv };
-	},
+	}
 };

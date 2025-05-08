@@ -1,7 +1,7 @@
 import { db } from '$lib/server/db/db';
 import { error, json } from '@sveltejs/kit';
-import { sql } from 'kysely';
 import * as datefns from 'date-fns';
+import { sql } from 'kysely';
 
 export async function GET({ url, params }) {
 	const id = parseInt(params.id);

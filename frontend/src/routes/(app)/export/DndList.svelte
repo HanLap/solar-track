@@ -1,19 +1,22 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
-	import { dndzone } from 'svelte-dnd-action';
+	import { type DndEvent, dndzone } from 'svelte-dnd-action';
 	import { flip } from 'svelte/animate';
 	import Token from './Token.svelte';
+	import type { DataItem } from './Data';
 
 	const flipDurationMs = 200;
 
-	export let items: { id: string; desc: string }[];
-	export let highlight: boolean = false;
+	interface Props {
+		items: DataItem[];
+		highlight?: boolean;
+		onChange?: (items: DataItem[]) => void;
+	}
 
-	const dispatch = createEventDispatcher();
+	let { items = $bindable(), highlight = false, onChange }: Props = $props();
 
-	function handleSort(e: CustomEvent<DndEvent<{ id: string; desc: string }>>) {
+	function handleSort(e: CustomEvent<DndEvent<DataItem>>) {
 		items = e.detail.items;
-		dispatch('change', { items });
+		onChange?.(items);
 	}
 </script>
 
@@ -23,10 +26,10 @@
 		flipDurationMs,
 		centreDraggedOnCursor: true,
 		dropTargetClasses: ['!border-primary'],
-		dropTargetStyle: {},
+		dropTargetStyle: {}
 	}}
-	on:consider={handleSort}
-	on:finalize={handleSort}
+	onconsider={handleSort}
+	onfinalize={handleSort}
 	class="flex h-full items-center gap-1 rounded border-2 border-transparent p-1 transition"
 >
 	{#each items as item (item.id)}

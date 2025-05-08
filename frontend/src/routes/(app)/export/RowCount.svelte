@@ -1,8 +1,12 @@
 <script lang="ts">
 	import { LoaderCircle } from 'lucide-svelte';
 
-	export let fetching: boolean;
-	export let count: number | undefined;
+	interface Props {
+		fetching: boolean;
+		count: number | undefined;
+	}
+
+	let { fetching, count }: Props = $props();
 </script>
 
 <div class="text-muted-foreground flex h-4 items-center text-sm">

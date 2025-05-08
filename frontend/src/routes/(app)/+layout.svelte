@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { ModeWatcher } from 'mode-watcher';
 	import { cubicIn, cubicOut } from 'svelte/easing';
 	import { fly } from 'svelte/transition';
@@ -6,7 +6,7 @@
 	import AppHeader from '$lib/components/AppHeader.svelte';
 	import '../../app.css';
 
-	export let data;
+	let { data, children } = $props();
 
 	const duration = 300;
 	const delay = duration + 0;
@@ -18,11 +18,11 @@
 
 <ModeWatcher />
 
-<div class="h-screen w-screen flex flex-col">
-<AppHeader />
-{#key data.header.pathname}
-	<div in:fly={transitionIn} out:fly={transitionOut} class="h-full w-full flex-1">
-		<slot />
-	</div>
-{/key}
+<div class="flex h-screen w-screen flex-col">
+	<AppHeader />
+	{#key data.header.pathname}
+		<div in:fly={transitionIn} out:fly={transitionOut} class="h-full w-full flex-1">
+			{@render children?.()}
+		</div>
+	{/key}
 </div>

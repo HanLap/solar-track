@@ -14,6 +14,6 @@ export const chart = (node: HTMLElement, options: ApexOptions) => {
 		},
 		destroy() {
 			myChart.destroy();
-		},
+		}
 	};
 };

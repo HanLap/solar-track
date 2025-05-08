@@ -1,6 +1,6 @@
 import type { CalendarDate } from '@internationalized/date';
-import { db } from '../db/db';
 import { sql } from 'kysely';
+import { db } from '../db/db';
 
 export async function getOverview(date: CalendarDate) {
 	const inverters = await db.selectFrom('inverter').selectAll().execute();
@@ -13,14 +13,14 @@ export async function getOverview(date: CalendarDate) {
 				.where('inverter_id', '=', i.id)
 				.where(
 					sql`created_at between ${date.toString()}
-					    and ${date.add({ days: 1 }).toString()}`,
+					    and ${date.add({ days: 1 }).toString()}`
 				)
 				.execute()
 		).map(({ x, y }) => ({ x: x.replace(' ', 'T') + 'Z', y }));
 
 		return {
 			name: i.name,
-			data,
+			data
 		};
 	});
 
@@ -32,7 +32,7 @@ export async function getOverview(date: CalendarDate) {
 			.where('inverter.plant_id', '=', 1)
 			.where(
 				sql`created_at between ${date.toString()} 
-					  and ${date.add({ days: 1 }).toString()}`,
+					  and ${date.add({ days: 1 }).toString()}`
 			)
 			.groupBy('created_at')
 			.execute()
@@ -50,7 +50,7 @@ export async function getOverview(date: CalendarDate) {
 		load,
 		day: date.toString(),
 		lines: await Promise.all(lines),
-		loading: false,
+		loading: false
 	};
 }
 

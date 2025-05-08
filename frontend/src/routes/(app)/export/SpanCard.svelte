@@ -1,18 +1,20 @@
 <script lang="ts">
 	import DateRangePicker from '$lib/components/DateRangePicker.svelte';
-	import * as Card from '$lib/ui/card';
+	import * as Card from '$lib/components/ui/card';
 	import type { CalendarDate } from '@internationalized/date';
 	import type { DateRange } from 'bits-ui';
 	import RowCount from './RowCount.svelte';
 
-	export let start: CalendarDate;
-	export let end: CalendarDate;
-	export let fetchingRowCount: boolean;
-	export let rowCount: number | undefined;
+	interface Props {
+		start: CalendarDate;
+		end: CalendarDate;
+		fetchingRowCount: boolean;
+		rowCount: number | undefined;
+	}
 
-	function handleRangeChange(e: CustomEvent<{ value: DateRange }>) {
-		const { value } = e.detail;
+	let { start = $bindable(), end = $bindable(), fetchingRowCount, rowCount }: Props = $props();
 
+	function handleRangeChange(value: DateRange) {
 		if (!value.start || !value.end) return;
 
 		start = value.start as CalendarDate;
@@ -29,7 +31,7 @@
 	</Card.Header>
 	<Card.Content class="space-y-2">
 		<div class="flex items-center gap-2">
-			<DateRangePicker value={{ start, end }} on:valueChange={handleRangeChange} />
+			<DateRangePicker value={{ start, end }} onValueChange={handleRangeChange} />
 		</div>
 	</Card.Content>
 	<Card.Footer>

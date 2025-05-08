@@ -14,7 +14,7 @@ export async function up(db) {
 		.addColumn('startAddr', 'integer', (column) => column.notNull())
 		.addColumn('endAddr', 'integer', (column) => column.notNull())
 		.addColumn('created_at', 'datetime', (column) =>
-			column.notNull().defaultTo(sql`CURRENT_TIMESTAMP`),
+			column.notNull().defaultTo(sql`CURRENT_TIMESTAMP`)
 		)
 		.execute();
 
@@ -25,7 +25,7 @@ export async function up(db) {
 			ip: '192.168.178.123',
 			port: 12345,
 			startAddr: 9,
-			endAddr: 10,
+			endAddr: 10
 		})
 		.execute();
 
@@ -43,7 +43,7 @@ export async function up(db) {
 		.createTable('inverter_tmp')
 		.addColumn('id', 'integer', (column) => column.primaryKey())
 		.addColumn('plant_id', 'integer', (col) =>
-			col.notNull().references('solar_plant.id').onDelete('cascade'),
+			col.notNull().references('solar_plant.id').onDelete('cascade')
 		)
 		.addColumn('addr', 'integer', (column) => column.notNull())
 		.addColumn('name', 'varchar', (column) => column.notNull())
@@ -67,19 +67,19 @@ export async function up(db) {
 		.addColumn('kt0', 'decimal', (column) => column.notNull())
 		.addColumn('fdat', 'datetime', (column) => column.notNull())
 		.addColumn('created_at', 'datetime', (column) =>
-			column.notNull().defaultTo(sql`CURRENT_TIMESTAMP`),
+			column.notNull().defaultTo(sql`CURRENT_TIMESTAMP`)
 		)
 		.execute();
 
 	await sql`insert into measurement_tmp (inverter_id, pac, pdc, kdy, kt0, fdat, created_at) select inverter_id, pac, pdc, kdy, kt0, fdat, created_at from measurement`.execute(
-		db,
+		db
 	);
 
 	await db.schema.dropTable('inverter').execute();
 	await db.schema.alterTable('inverter_tmp').renameTo('inverter').execute();
 
 	await sql`insert into measurement (inverter_id, pac, pdc, kdy, kt0, fdat, created_at) select inverter_id, pac, pdc, kdy, kt0, fdat, created_at from measurement_tmp`.execute(
-		db,
+		db
 	);
 	await db.schema.dropTable('measurement_tmp').execute();
 }
@@ -111,18 +111,18 @@ export async function down(db) {
 		.addColumn('kt0', 'decimal', (column) => column.notNull())
 		.addColumn('fdat', 'datetime', (column) => column.notNull())
 		.addColumn('created_at', 'datetime', (column) =>
-			column.notNull().defaultTo(sql`CURRENT_TIMESTAMP`),
+			column.notNull().defaultTo(sql`CURRENT_TIMESTAMP`)
 		)
 		.execute();
 	await sql`insert into measurement_tmp (inverter_id, pac, pdc, kdy, kt0, fdat, created_at) select inverter_id, pac, pdc, kdy, kt0, fdat, created_at from measurement`.execute(
-		db,
+		db
 	);
 
 	await db.schema.dropTable('inverter').execute();
 	await db.schema.alterTable('inverter_tmp').renameTo('inverter').execute();
 
 	await sql`insert into measurement (inverter_id, pac, pdc, kdy, kt0, fdat, created_at) select inverter_id, pac, pdc, kdy, kt0, fdat, created_at from measurement_tmp`.execute(
-		db,
+		db
 	);
 	await db.schema.dropTable('measurement_tmp').execute();
 
