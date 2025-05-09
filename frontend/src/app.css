@@ -1,8 +1,6 @@
 /* Write your global styles here, in PostCSS syntax */
 @import 'tailwindcss';
 
-@config '../tailwind.config.cjs';
-
 @plugin "@tailwindcss/forms";
 
 /*
