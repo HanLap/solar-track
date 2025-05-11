@@ -31,8 +31,7 @@ services:
       CRON_PATTERN: "0 * * * * *"
   timescaledb:
     image: timescale/timescaledb-ha:pg17
-    ports:
-      - '5432:5432'
+    expose: 5432
     environment:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
