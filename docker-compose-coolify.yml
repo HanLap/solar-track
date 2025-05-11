@@ -16,6 +16,8 @@ services:
       DATABASE_URL: "postgres://root:${POSTGRES_PASSWORD}@timescaledb:5432/solar-panel"
     volumes: 
       - ./data:/data:rw
+    depends_on:
+      - timescaledb
   solarmax-service:
     build: 
       target: solarmax-service   
