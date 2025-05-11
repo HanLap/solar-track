@@ -1,8 +1,9 @@
 import type { CalendarDate } from '@internationalized/date';
 import { sql } from 'kysely';
-import { db } from '../db/db';
+import type { MeasurementResponse } from '../api/solarmax/Models';
+import { db } from '../db/kysely/db';
 
-export async function getOverview(date: CalendarDate) {
+async function getOverview(date: CalendarDate) {
 	const inverters = await db.selectFrom('inverter').selectAll().execute();
 
 	const inverterLines = inverters.map(async (i) => {
@@ -12,7 +13,7 @@ export async function getOverview(date: CalendarDate) {
 				.select(['created_at as x', 'pac as y'])
 				.where('inverter_id', '=', i.id)
 				.where(
-					sql`created_at between ${date.toString()}
+					sql<boolean>`created_at between ${date.toString()}
 					    and ${date.add({ days: 1 }).toString()}`
 				)
 				.execute()
@@ -31,7 +32,7 @@ export async function getOverview(date: CalendarDate) {
 			.innerJoin('inverter', 'inverter.id', 'measurement.inverter_id')
 			.where('inverter.plant_id', '=', 1)
 			.where(
-				sql`created_at between ${date.toString()} 
+				sql<boolean>`created_at between ${date.toString()} 
 					  and ${date.add({ days: 1 }).toString()}`
 			)
 			.groupBy('created_at')
@@ -68,3 +69,41 @@ async function getLoad(plantId: number) {
 		)?.sum ?? undefined
 	);
 }
+
+async function saveMeasurement(measurement: MeasurementResponse[], date: string) {
+	const ids = await db
+		.selectFrom('inverter')
+		.select(['id', 'addr'])
+		.where(
+			'addr',
+			'in',
+			measurement.map((m) => m.addr)
+		)
+		.execute();
+
+	await db
+		.insertInto('measurement')
+		.values(
+			measurement.map((m) => {
+				const inverter_id = ids.find((i) => i.addr === m.addr)?.id;
+
+				if (!inverter_id) throw new Error('Inverter not found');
+
+				return {
+					inverter_id,
+					fdat: new Date(m.fdat).toISOString(),
+					pac: m.pac,
+					pdc: m.pdc,
+					kdy: m.kdy,
+					kt0: m.kt0,
+					created_at: date
+				};
+			})
+		)
+		.execute();
+}
+
+export default {
+	getOverview,
+	saveMeasurement
+};

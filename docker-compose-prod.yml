@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  frontend: 
+    image: ghcr.io/hanlap/solar-panel/frontend:main 
+    restart: unless-stopped
+    ports:
+      - 80:3000
+    environment:
+      API_PATH: http://solarmax-service:8000
+      DB_PATH: /data/data.db
+      ORIGIN: http://localhost
+
+      DATABASE_URL: "postgres://root:password@timescaledb:5432/solar-panel"
+    volumes: 
+      - ./data:/data:rw
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1k"
+        max-file: "3"
+
+  solarmax-service: 
+    image: ghcr.io/hanlap/solar-panel/solarmax-service:main 
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1k"
+        max-file: "3"
+  
+  update-scheduler: 
+    image: ghcr.io/hanlap/solar-panel/update-scheduler:main 
+    restart: unless-stopped
+    depends_on:
+      - frontend
+    environment:
+      API_PATH: http://frontend:3000
+      CRON_PATTERN: "0 * * * * *"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1k"
+        max-file: "3"
+
+  timescaledb:
+    image: timescale/timescaledb-ha:pg17
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: solar-panel
+    volumes:
+      - ./pgdata:/home/postgres/pgdata/data
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1k"
+        max-file: "3"
+    

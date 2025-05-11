@@ -1,4 +1,4 @@
-import { db } from '$lib/server/db/db.js';
+import { db } from '$lib/server/db/kysely/db.js';
 import { fail, redirect } from '@sveltejs/kit';
 import { z } from 'zod';
 import { zfd } from 'zod-form-data';
