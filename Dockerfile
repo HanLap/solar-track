@@ -1,4 +1,4 @@
-FROM node:20-slim AS base
+FROM node:22-slim AS base
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable
@@ -16,7 +16,7 @@ FROM base AS frontend
 COPY --from=build /prod/frontend /prod/frontend
 WORKDIR /prod/frontend
 EXPOSE 8000
-CMD node migrate.js && node build/index.js
+CMD node migrate.js && pnpm db:migrate:prod && node build/index.js
 
 ####
 FROM base AS update-scheduler
@@ -25,7 +25,7 @@ WORKDIR /prod/update-scheduler
 CMD [ "node", "main.js" ]
 
 ####
-FROM python:3.12.0-alpine3.18 as solarmax-service
+FROM python:3.12.0-alpine3.18 AS solarmax-service
 WORKDIR /prod/solarmax-service
 RUN python3 -m venv /opt/venv
 COPY solarmax-service/requirements.txt .

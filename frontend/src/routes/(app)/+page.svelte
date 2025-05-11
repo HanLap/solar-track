@@ -30,25 +30,13 @@
 </script>
 
 <div class="flex h-full flex-1 flex-col gap-8 px-4 py-8 lg:px-20">
-	<!-- <div class="flex flex-row justify-center gap-4">
-			<Button href=".">Heute</Button>
-
-			<DatePicker {date} on:valueChange={handleDateChange} class="w-40" />
-
-			<Button href="/export" variant="outline">Daten Exportieren</Button>
-		</div> -->
-
-	{#await data.load then load}
-		<CurrentLoad load={load ?? 0} ivmax={data.ivmax} />
-	{/await}
+	<div class="h-16">
+		{#await data.load then load}
+			<CurrentLoad load={load ?? 0} ivmax={data.ivmax} />
+		{/await}
+	</div>
 
 	<div class="relative flex justify-center lg:flex-1">
 		<DayChart {date} ivmax={data.ivmax} lines={data.lines} loading={data.loading} />
 	</div>
-
-	<!-- <form method="post" class="" use:enhance>
-		<button type="submit" formaction="?/getInverters" class="btn btn-sm variant-filled-primary">
-			get inverters
-		</button>
-	</form> -->
 </div>

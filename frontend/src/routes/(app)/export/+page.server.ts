@@ -1,5 +1,5 @@
-import type { Database } from '$lib/server/db/Database';
-import { db } from '$lib/server/db/db';
+import type { Database } from '$lib/server/db/kysely/Database';
+import { db } from '$lib/server/db/kysely/db';
 import { parseDate } from '@internationalized/date';
 import { fail } from '@sveltejs/kit';
 import { sql, type SelectExpression } from 'kysely';

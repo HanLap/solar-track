@@ -10,6 +10,10 @@ services:
       API_PATH: http://solarmax-service:8000
       DB_PATH: /data/data.db
       ORIGIN: http://localhost
+
+      DB_USE_DRIZZLE: true
+
+      DATABASE_URL: "postgres://root:${POSTGRES_PASSWORD}@timescaledb:5432/solar-panel"
     volumes: 
       - ./data:/data:rw
   solarmax-service:
@@ -23,3 +27,13 @@ services:
     environment:
       API_PATH: http://frontend:3000
       CRON_PATTERN: "0 * * * * *"
+  timescaledb:
+    image: timescale/timescaledb-ha:pg17
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: solar-panel
+    volumes:
+      - ./pgdata:/home/postgres/pgdata/data
