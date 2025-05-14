@@ -16,6 +16,8 @@ services:
       DATABASE_URL: '${DATABASE_URL}'
     volumes:
       - ./data:/data:rw
+    healthcheck:
+      test: curl --fail http://localhost:3000 || exit 1
   solarmax-service:
     build:
       target: solarmax-service
