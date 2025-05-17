@@ -124,8 +124,6 @@ async function saveMeasurement(measurement: MeasurementResponse[], date: ZonedDa
 		} satisfies typeof measurementTable.$inferInsert;
 	});
 
-	console.log(data);
-
 	await db.insert(measurementTable).values(data);
 }
 

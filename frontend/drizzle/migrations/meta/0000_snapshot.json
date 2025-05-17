@@ -1,0 +1,278 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "prevId": "",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.kysely_migration": {
+      "name": "kysely_migration",
+      "schema": "",
+      "columns": {
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "timestamp": {
+          "name": "timestamp",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false
+    },
+    "public.kysely_migration_lock": {
+      "name": "kysely_migration_lock",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "is_locked": {
+          "name": "is_locked",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'0'"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false
+    },
+    "public.inverter": {
+      "name": "inverter",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigint",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "plant_id": {
+          "name": "plant_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "addr": {
+          "name": "addr",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ivmax": {
+          "name": "ivmax",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "inverter_plant_id_fkey": {
+          "name": "inverter_plant_id_fkey",
+          "tableFrom": "inverter",
+          "tableTo": "solar_plant",
+          "schemaTo": "public",
+          "columnsFrom": [
+            "plant_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false
+    },
+    "public.measurement": {
+      "name": "measurement",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigint",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "inverter_id": {
+          "name": "inverter_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "pac": {
+          "name": "pac",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "pdc": {
+          "name": "pdc",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "kdy": {
+          "name": "kdy",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "kt0": {
+          "name": "kt0",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "fdat": {
+          "name": "fdat",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "measurement_inverter_id_fkey": {
+          "name": "measurement_inverter_id_fkey",
+          "tableFrom": "measurement",
+          "tableTo": "inverter",
+          "schemaTo": "public",
+          "columnsFrom": [
+            "inverter_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false
+    },
+    "public.solar_plant": {
+      "name": "solar_plant",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigint",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ip": {
+          "name": "ip",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "port": {
+          "name": "port",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "startaddr": {
+          "name": "startaddr",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "endaddr": {
+          "name": "endaddr",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "schemas": {},
+    "tables": {},
+    "columns": {}
+  },
+  "internal": {
+    "tables": {
+      "kysely_migration_lock": {
+        "columns": {
+          "is_locked": {
+            "isDefaultAnExpression": true
+          }
+        }
+      }
+    }
+  }
+}

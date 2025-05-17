@@ -3,6 +3,13 @@
   "dialect": "postgresql",
   "entries": [
     {
+      "idx": 0,
+      "version": "7",
+      "when": 747494183546,
+      "tag": "0000_rapid_nicolaos",
+      "breakpoints": true
+    },
+    {
       "idx": 1,
       "version": "7",
       "when": 1747494184546,
