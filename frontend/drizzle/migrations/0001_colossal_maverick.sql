@@ -1,7 +1,3 @@
-ALTER TABLE "kysely_migration" DISABLE ROW LEVEL SECURITY;--> statement-breakpoint
-ALTER TABLE "kysely_migration_lock" DISABLE ROW LEVEL SECURITY;--> statement-breakpoint
-DROP TABLE "kysely_migration" CASCADE;--> statement-breakpoint
-DROP TABLE "kysely_migration_lock" CASCADE;--> statement-breakpoint
 ALTER TABLE "solar_plant" RENAME COLUMN "startaddr" TO "start_addr";--> statement-breakpoint
 ALTER TABLE "solar_plant" RENAME COLUMN "endaddr" TO "end_addr";--> statement-breakpoint
 ALTER TABLE "measurement" DROP CONSTRAINT "measurement_inverter_id_fkey";
