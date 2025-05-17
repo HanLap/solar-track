@@ -1,4 +1,4 @@
-import { integer, pgTable, real, serial, text, timestamp } from 'drizzle-orm/pg-core';
+import { integer, pgTable, real, text, timestamp } from 'drizzle-orm/pg-core';
 
 export const usersTable = pgTable('user', {
 	id: text('id').primaryKey(),
@@ -18,7 +18,7 @@ export const sessionsTable = pgTable('session', {
 // Solar Plant Schema
 
 export const solarPlantTble = pgTable('solar_plant', {
-	id: serial('id').primaryKey(),
+	id: integer('id').primaryKey().generatedAlwaysAsIdentity(),
 	name: text('name').notNull(),
 	description: text('description'),
 	ip: text('ip').notNull(),
@@ -29,7 +29,7 @@ export const solarPlantTble = pgTable('solar_plant', {
 });
 
 export const inverterTable = pgTable('inverter', {
-	id: serial('id').primaryKey(),
+	id: integer('id').primaryKey().generatedAlwaysAsIdentity(),
 	plantId: integer('plant_id')
 		.notNull()
 		.references(() => solarPlantTble.id),
@@ -39,7 +39,7 @@ export const inverterTable = pgTable('inverter', {
 });
 
 export const measurementTable = pgTable('measurement', {
-	id: serial('id').primaryKey(),
+	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 2_000_000 }),
 	inverterId: integer('inverter_id')
 		.notNull()
 		.references(() => inverterTable.id),

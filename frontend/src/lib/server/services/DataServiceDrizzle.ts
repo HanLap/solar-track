@@ -126,7 +126,7 @@ async function saveMeasurement(measurement: MeasurementResponse[], date: ZonedDa
 
 	console.log(data);
 
-	await db.insert(measurementTable).values(data).execute();
+	await db.insert(measurementTable).values(data);
 }
 
 export default {
