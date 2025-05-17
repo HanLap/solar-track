@@ -11,11 +11,11 @@ export async function createMeasurement() {
 
 	if (measurement.length === 0) throw new Error('No measurement data');
 
-	DataServiceKysely.saveMeasurement(measurement, date);
+	await DataServiceKysely.saveMeasurement(measurement, date);
 
 	try {
 		const date = now("UTC")
-		DataServiceDrizzle.saveMeasurement(measurement, date);
+		await DataServiceDrizzle.saveMeasurement(measurement, date);
 	} catch (error) {
 		console.error('Error saving measurement to timescaledb:', error);
 	}
