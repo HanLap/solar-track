@@ -120,7 +120,7 @@ async function saveMeasurement(measurement: MeasurementResponse[], date: ZonedDa
 			pdc: m.pdc,
 			kdy: m.kdy,
 			kt0: m.kt0,
-			createdAt: date.toString()
+			createdAt: date.toAbsoluteString()
 		} satisfies typeof measurementTable.$inferInsert;
 	});
 
