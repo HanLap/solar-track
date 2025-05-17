@@ -17,7 +17,7 @@ services:
     logging:
       driver: "json-file"
       options:
-        max-size: "1k"
+        max-size: "50mb"
         max-file: "3"
     healthcheck:
       test: curl --fail http://localhost:3000/health || exit 1
@@ -32,7 +32,7 @@ services:
     logging:
       driver: "json-file"
       options:
-        max-size: "1k"
+        max-size: "50mb"
         max-file: "3"
   
   update-scheduler: 
@@ -46,7 +46,7 @@ services:
     logging:
       driver: "json-file"
       options:
-        max-size: "1k"
+        max-size: "50mb"
         max-file: "3"
 
   timescaledb:
@@ -62,6 +62,6 @@ services:
     logging:
       driver: "json-file"
       options:
-        max-size: "1k"
+        max-size: "50mb"
         max-file: "3"
     
