@@ -1,10 +1,12 @@
 <script lang="ts">
+	import { enhance } from '$app/forms';
+	import { Button } from '$lib/components/ui/button';
 </script>
 
 <div class="mx-0 mt-4 flex flex-col justify-center md:mx-10">
 	<h3 class="h3 font-bold">Neue Solaranlage erstellen</h3>
 
-	<form class="mx-auto mt-4 flex flex-col gap-5">
+	<form class="mx-auto mt-4 flex flex-col gap-5" method="POST" use:enhance>
 		<label class="label w-80">
 			<span>Name:</span>
 			<input class="input" type="text" name="name" value="" />
@@ -38,6 +40,6 @@
 			</div>
 		</div>
 
-		<button class="btn variant-filled-primary mt-10" type="submit">Erstellen</button>
+		<Button class="btn variant-filled-primary mt-10" type="submit">Erstellen</Button>
 	</form>
 </div>

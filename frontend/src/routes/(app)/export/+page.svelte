@@ -93,7 +93,9 @@
 	<DataSelector bind:selected={selectedCols} />
 
 	<form method="post" use:enhance={handleFormSubmit}>
-		<input type="hidden" name="format" value={selectedCols?.map(({ id }) => id).join(',')} />
+		{#each selectedCols as col, index}
+			<input type="hidden" name="format[{index}]" value={col.id} />
+		{/each}
 		<input type="date" name="start" value={start} hidden />
 		<input type="date" name="end" value={end} hidden />
 

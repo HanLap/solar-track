@@ -127,8 +127,44 @@ async function saveMeasurement(measurement: MeasurementResponse[], date: ZonedDa
 	await db.insert(measurementTable).values(data);
 }
 
+export type ExportFormat = 'date' | 'pac' | 'pdc' | 'kdy' | 'kt0';
+async function exportMeasurements(format: ExportFormat[], start: string, end: string) {
+	const select = parseSelectFormat(format);
+
+	return await db
+		.select(select)
+		.from(measurementTable)
+		.innerJoin(inverterTable, eq(inverterTable.id, measurementTable.inverterId))
+		.where(
+			and(
+				eq(inverterTable.plantId, 1),
+				between(measurementTable.createdAt, start.toString(), end.toString())
+			)
+		)
+		.groupBy(measurementTable.createdAt)
+		.execute();
+}
+
+function parseSelectFormat(format: ExportFormat[]) {
+	return format.reduce((acc, f) => {
+		switch (f) {
+			case 'date':
+				return { ...acc, createdAt: measurementTable.createdAt };
+			case 'pac':
+				return { ...acc, pac: sql<number>`sum(${measurementTable.pac})` };
+			case 'pdc':
+				return { ...acc, pdc: sql<number>`sum(${measurementTable.pdc})` };
+			case 'kdy':
+				return { ...acc, kdy: sql<number>`sum(${measurementTable.kdy})` };
+			case 'kt0':
+				return { ...acc, kt0: sql<number>`sum(${measurementTable.kt0})` };
+		}
+	}, {});
+}
+
 export default {
 	getMeasurementCount,
 	getOverview,
-	saveMeasurement
+	saveMeasurement,
+	exportMeasurements
 };

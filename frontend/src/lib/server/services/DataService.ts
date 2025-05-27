@@ -1,6 +1,7 @@
 import type { CalendarDate } from '@internationalized/date';
-import { sql } from 'kysely';
+import { sql, type SelectExpression } from 'kysely';
 import type { MeasurementResponse } from '../api/solarmax/Models';
+import type { Database } from '../db/kysely/Database';
 import { db } from '../db/kysely/db';
 
 async function getOverview(date: CalendarDate) {
@@ -103,7 +104,36 @@ async function saveMeasurement(measurement: MeasurementResponse[], date: string)
 		.execute();
 }
 
+async function exportMeasurements(format: string[], start: string, end: string) {
+	const select = format.map((f) => {
+		switch (f) {
+			case 'date':
+				return 'created_at';
+			case 'pac':
+				return sql<number>`sum(pac)`.as('pac');
+			case 'pdc':
+				return sql<number>`sum(pdc)`.as('pdc');
+			case 'kdy':
+				return sql<number>`sum(kdy)`.as('kdy');
+			case 'kt0':
+				return sql<number>`sum(kt0)`.as('kt0');
+			default:
+				return f;
+		}
+	}) as SelectExpression<Database, 'measurement'>[];
+
+	return await db
+		.selectFrom('measurement')
+		.select(select)
+		.innerJoin('inverter', 'inverter.id', 'measurement.inverter_id')
+		.where('inverter.plant_id', '=', 1)
+		.where((eb) => eb.between('created_at', start, end))
+		.groupBy('created_at')
+		.execute();
+}
+
 export default {
 	getOverview,
-	saveMeasurement
+	saveMeasurement,
+	exportMeasurements
 };

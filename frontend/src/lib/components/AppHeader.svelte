@@ -19,8 +19,8 @@
 	}
 </script>
 
-<header class="flex justify-between border-b px-8 py-4">
-	<div class="w-40">
+<header class="flex items-stretch justify-between border-b px-8 py-4">
+	<div class="content-center">
 		<a href="/">
 			<h1 class="text-2xl">Solaranlage</h1>
 		</a>

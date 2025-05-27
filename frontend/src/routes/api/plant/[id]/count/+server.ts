@@ -1,5 +1,5 @@
-import { env } from '$env/dynamic/private';
 import { db } from '$lib/server/db/kysely/db';
+import { DB_USE_DRIZZLE } from '$lib/server/flags';
 import DataService from '$lib/server/services/DataServiceDrizzle';
 import { parseDate } from '@internationalized/date';
 import { error, json } from '@sveltejs/kit';
@@ -15,7 +15,7 @@ export async function GET({ url, params }) {
 		error(400, 'id, start and end are required');
 	}
 
-	if (env.DB_USE_DRIZZLE === 'true') {
+	if (DB_USE_DRIZZLE) {
 		const start = parseDate(startStr);
 		const end = parseDate(endStr);
 

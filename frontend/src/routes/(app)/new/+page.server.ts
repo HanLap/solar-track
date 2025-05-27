@@ -1,29 +1,19 @@
-import { db } from '$lib/server/db/kysely/db.js';
+import { CreateSolarPlantSchema } from '$lib/schemas/solar-plant';
+import { db } from '$lib/server/db/kysely/db';
+import { DB_USE_DRIZZLE } from '$lib/server/flags';
+import SolarPlantService from '$lib/server/services/SolarPlantService';
+import { formAction } from '$lib/server/util.js';
 import { fail, redirect } from '@sveltejs/kit';
-import { z } from 'zod';
-import { zfd } from 'zod-form-data';
 
-const schema = zfd.formData({
-	name: zfd.text(),
-	description: zfd.text().optional(),
-	ip: z.string().ip({ version: 'v4' }),
-	port: z.number().int().min(1).max(65535),
-	startAddr: z.number().int().min(0).max(65535),
-	endAddr: z.number().int().min(0).max(65535)
-});
-
-export const actions = {
-	async default({ request }) {
-		const res = await schema.safeParseAsync(await request.formData());
-
-		if (!res.success) {
-			return fail(400, { error: res.error });
-		}
-
-		const data = res.data;
-
+const createSolarPlantAction = formAction({
+	schema: CreateSolarPlantSchema,
+	async handler({ json }) {
 		try {
-			await db.insertInto('solar_plant').values(data).executeTakeFirstOrThrow();
+			if (DB_USE_DRIZZLE) {
+				await SolarPlantService.createSolarPlant(json);
+			} else {
+				await db.insertInto('solar_plant').values(json).executeTakeFirstOrThrow();
+			}
 		} catch (e) {
 			console.error(e);
 			return fail(500);
@@ -31,4 +21,8 @@ export const actions = {
 
 		redirect(304, '/');
 	}
+});
+
+export const actions = {
+	default: createSolarPlantAction
 };
