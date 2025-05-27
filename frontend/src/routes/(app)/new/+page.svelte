@@ -1,12 +1,24 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { Button } from '$lib/components/ui/button';
+
+	let { form } = $props();
 </script>
 
 <div class="mx-0 mt-4 flex flex-col justify-center md:mx-10">
 	<h3 class="h3 font-bold">Neue Solaranlage erstellen</h3>
 
 	<form class="mx-auto mt-4 flex flex-col gap-5" method="POST" use:enhance>
+		{#if form?.error}
+			<div class="border-destructive bg-destructive/20 rounded-lg border p-4 w-96">
+				Konnte die Solaranlage nicht erstellen: <br />{JSON.stringify(
+					form.error.fieldErrors,
+					null,
+					2
+				)}
+			</div>
+		{/if}
+
 		<label class="label w-80">
 			<span>Name:</span>
 			<input class="input" type="text" name="name" value="" />
