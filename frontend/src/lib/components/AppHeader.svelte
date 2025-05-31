@@ -2,11 +2,10 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import { Button } from '$lib/components/ui/button';
-	import { ThemeSwitcher } from '$lib/components/ui/theme-switcher';
 	import { type DateValue, parseDate } from '@internationalized/date';
-	import DatePicker from './DatePicker.svelte';
-	import { fade } from 'svelte/transition';
 	import { cubicInOut } from 'svelte/easing';
+	import { fade } from 'svelte/transition';
+	import DatePicker from './DatePicker.svelte';
 
 	let day = $derived(page.data?.day);
 
@@ -40,4 +39,3 @@
 		<Button href="/export" variant="outline">Daten Exportieren</Button>
 	</div>
 </header>
-<ThemeSwitcher class="fixed bottom-4 right-4" />

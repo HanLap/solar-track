@@ -1,9 +1,11 @@
 <script lang="ts">
+	import AppHeader from '$lib/components/AppHeader.svelte';
+	import { ThemeSwitcher } from '$lib/components/ui/theme-switcher';
 	import { ModeWatcher } from 'mode-watcher';
 	import { cubicIn, cubicOut } from 'svelte/easing';
 	import { fly } from 'svelte/transition';
+	import CommandPanel from '../../lib/components/CommandPanel.svelte';
 
-	import AppHeader from '$lib/components/AppHeader.svelte';
 	import '../../app.css';
 
 	let { data, children } = $props();
@@ -17,6 +19,10 @@
 </script>
 
 <ModeWatcher />
+
+<ThemeSwitcher class="fixed bottom-4 right-4" />
+
+<CommandPanel />
 
 <div class="flex h-screen w-screen flex-col">
 	<AppHeader />
