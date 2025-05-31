@@ -8,7 +8,10 @@
 
 	$effect(() => {
 		function handleKeydown(e: KeyboardEvent) {
-			if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
+			if (
+				(e.key === 'k' && (e.metaKey || e.ctrlKey)) ||
+				(e.key === 'p' && (e.metaKey || e.ctrlKey))
+			) {
 				e.preventDefault();
 				open = !open;
 			}
