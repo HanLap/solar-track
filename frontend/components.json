@@ -3,11 +3,11 @@
 	"style": "default",
 	"tailwind": {
 		"config": "tailwind.config.cjs",
-		"css": "src/app.pcss",
+		"css": "src/app.css",
 		"baseColor": "gray"
 	},
 	"aliases": {
-		"components": "$lib",
+		"components": "$lib/components",
 		"utils": "$lib/utils",
 		"ui": "$lib/components/ui",
 		"hooks": "$lib/hooks"

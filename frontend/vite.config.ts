@@ -4,7 +4,7 @@ import { defineConfig } from 'vite';
 
 export default defineConfig(() => {
 	return {
-		plugins: [sveltekit(), tailwindcss()],
+		plugins: [tailwindcss(), sveltekit()],
 		optimizeDeps: {
 			esbuildOptions: {
 				target: 'esnext'
