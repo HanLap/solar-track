@@ -4,7 +4,6 @@
 	import DayChart from '$lib/components/DayChart.svelte';
 	import { parseDate } from '@internationalized/date';
 	import { onMount } from 'svelte';
-	import AdminPanel from './AdminPanel.svelte';
 
 	let { data } = $props();
 
@@ -40,6 +39,4 @@
 	<div class="relative flex justify-center lg:flex-1">
 		<DayChart {date} ivmax={data.ivmax} lines={data.lines} loading={data.loading} />
 	</div>
-
-	<AdminPanel />
 </div>
