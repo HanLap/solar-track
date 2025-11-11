@@ -11,8 +11,6 @@ services:
       DB_PATH: /data/data.db
       ORIGIN: http://localhost
 
-      DB_USE_DRIZZLE: true
-
       DATABASE_URL: '${DATABASE_URL}'
     volumes:
       - ./data:/data:rw

@@ -1,7 +1,5 @@
 import { exportRequestSchema } from '$lib/schemas/export-request';
-import { DB_USE_DRIZZLE } from '$lib/server/flags';
-import DataServiceKysely from '$lib/server/services/DataService';
-import DataServiceDrizzle from '$lib/server/services/DataServiceDrizzle';
+import DataService from '$lib/server/services/DataService';
 import { formAction } from '$lib/server/util';
 import { parseDate } from '@internationalized/date';
 import { fail } from '@sveltejs/kit';
@@ -14,12 +12,7 @@ const exportCsvAction = formAction({
 
 		const end = parseDate(endStr).add({ days: 1 }).toString();
 
-		let data = [];
-		if (DB_USE_DRIZZLE) {
-			data = await DataServiceDrizzle.exportMeasurements(format, start, end);
-		} else {
-			data = await DataServiceKysely.exportMeasurements(format, start, end);
-		}
+		const data = await DataService.exportMeasurements(format, start, end);
 
 		if (data.length < 0) {
 			return fail(404, { noData: true });

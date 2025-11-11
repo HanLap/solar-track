@@ -1,136 +1,161 @@
-import type { CalendarDate } from '@internationalized/date';
-import { sql, type SelectExpression } from 'kysely';
+import type { CalendarDate, ZonedDateTime } from '@internationalized/date';
+import { and, asc, between, desc, eq, getTableColumns, inArray, sql } from 'drizzle-orm';
 import type { MeasurementResponse } from '../api/solarmax/Models';
-import type { Database } from '../db/kysely/Database';
-import { db } from '../db/kysely/db';
+import { db } from '../db/drizzle';
+import { inverterTable, measurementTable, type Inverter } from '../db/drizzle/schema';
 
-async function getOverview(date: CalendarDate) {
-	const inverters = await db.selectFrom('inverter').selectAll().execute();
+type InverterLine = {
+	name: string;
+	data: { x: string; y: number }[];
+};
 
-	const inverterLines = inverters.map(async (i) => {
-		const data = (
-			await db
-				.selectFrom('measurement')
-				.select(['created_at as x', 'pac as y'])
-				.where('inverter_id', '=', i.id)
-				.where(
-					sql<boolean>`created_at between ${date.toString()}
-					    and ${date.add({ days: 1 }).toString()}`
-				)
-				.execute()
-		).map(({ x, y }) => ({ x: x.replace(' ', 'T') + 'Z', y }));
+export type ExportFormat = 'date' | 'pac' | 'pdc' | 'kdy' | 'kt0';
+
+export default abstract class DataService {
+	static async getOverview(date: CalendarDate) {
+		const inverters = await db
+			.select({ ...getTableColumns(inverterTable), plant_id: inverterTable.plantId })
+			.from(inverterTable)
+			.execute();
+
+		const inverterLines = inverters.map((i) => this.getInverterLine(i, date));
+		const combinedLineData = this.getCombinedInverterLine(date);
+
+		const lines = [combinedLineData, ...inverterLines];
+
+		const ivmax = Math.ceil(inverters.reduce((acc, i) => acc + i.ivmax, 0) / 1000) * 1000 - 2000;
 
 		return {
-			name: i.name,
-			data
+			inverters,
+			ivmax,
+			day: date.toString(),
+			lines: await Promise.all(lines)
 		};
-	});
+	}
 
-	const combinedLineData = (
-		await db
-			.selectFrom('measurement')
-			.select(['created_at as x', sql<number>`sum(pac)`.as('y')])
-			.innerJoin('inverter', 'inverter.id', 'measurement.inverter_id')
-			.where('inverter.plant_id', '=', 1)
+	static async getInverterLine(inverter: Inverter, date: CalendarDate): Promise<InverterLine> {
+		const data = await db
+			.select({ x: measurementTable.createdAt, y: measurementTable.pac })
+			.from(measurementTable)
 			.where(
-				sql<boolean>`created_at between ${date.toString()} 
-					  and ${date.add({ days: 1 }).toString()}`
+				and(
+					eq(measurementTable.inverterId, inverter.id),
+					between(measurementTable.createdAt, date.toString(), date.add({ days: 1 }).toString())
+				)
 			)
-			.groupBy('created_at')
-			.execute()
-	).map(({ x, y }) => ({ x: x.replace(' ', 'T') + 'Z', y }));
+			.orderBy(asc(measurementTable.createdAt))
+			.execute();
 
-	const lines = [{ name: 'Gesamt', data: combinedLineData }, ...inverterLines];
+		return { name: inverter.name, data };
+	}
 
-	const ivmax = inverters.reduce((acc, i) => acc + i.ivmax, 400);
+	static async getCombinedInverterLine(date: CalendarDate): Promise<InverterLine> {
+		const data = await db
+			.select({ x: measurementTable.createdAt, y: sql<number>`sum(${measurementTable.pac})` })
+			.from(measurementTable)
+			.innerJoin(inverterTable, eq(inverterTable.id, measurementTable.inverterId))
+			.where(
+				and(
+					eq(inverterTable.plantId, 1),
+					between(measurementTable.createdAt, date.toString(), date.add({ days: 1 }).toString())
+				)
+			)
+			.groupBy(measurementTable.createdAt)
+			.orderBy(asc(measurementTable.createdAt))
+			.execute();
 
-	return {
-		inverters,
-		ivmax,
-		day: date.toString(),
-		lines: await Promise.all(lines)
-	};
-}
+		return { name: 'Gesamt', data };
+	}
 
-async function getLoad(plantId: number) {
-	return (
-		(
+	static async getLoad(plantId: number) {
+		return (
+			(
+				await db
+					.select({ sum: sql<number>`sum(${measurementTable.pac})` })
+					.from(measurementTable)
+					.innerJoin(inverterTable, eq(inverterTable.id, measurementTable.inverterId))
+					.where(eq(inverterTable.plantId, plantId))
+					.groupBy(measurementTable.createdAt)
+					.orderBy(desc(measurementTable.createdAt))
+					.execute()
+			)[0]?.sum ?? undefined
+		);
+	}
+
+	static async getMeasurementCount(plantId: number, start: CalendarDate, end: CalendarDate) {
+		return (
 			await db
-				.selectFrom('measurement')
-				.select(sql<number>`sum(pac)`.as('sum'))
-				.innerJoin('inverter', 'inverter.id', 'measurement.inverter_id')
-				.where('inverter.plant_id', '=', plantId)
-				.groupBy('created_at')
-				.orderBy('measurement.created_at', 'desc')
-				.executeTakeFirst()
-		)?.sum ?? 0
-	);
+				.select({ count: sql<number>`count(1)` })
+				.from(measurementTable)
+				.innerJoin(inverterTable, eq(inverterTable.id, measurementTable.inverterId))
+				.where(
+					and(
+						eq(inverterTable.plantId, plantId),
+						between(measurementTable.createdAt, start.toString(), end.add({ days: 1 }).toString())
+					)
+				)
+				.execute()
+		)[0];
+	}
+
+	static async saveMeasurement(measurement: MeasurementResponse[], date: ZonedDateTime) {
+		const inverters = await db.query.inverterTable.findMany({
+			where: inArray(
+				inverterTable.addr,
+				measurement.map((m) => m.addr)
+			)
+		});
+
+		const data = measurement.map((m) => {
+			const inverterId = inverters.find((i) => i.addr === m.addr)?.id;
+
+			if (!inverterId) throw new Error('Inverter not found');
+
+			return {
+				inverterId,
+				fdat: new Date(m.fdat).toISOString(),
+				pac: m.pac,
+				pdc: m.pdc,
+				kdy: m.kdy,
+				kt0: m.kt0,
+				createdAt: date.toAbsoluteString()
+			} satisfies typeof measurementTable.$inferInsert;
+		});
+
+		await db.insert(measurementTable).values(data);
+	}
+
+	static async exportMeasurements(format: ExportFormat[], start: string, end: string) {
+		const select = this.parseSelectFormat(format);
+
+		return await db
+			.select(select)
+			.from(measurementTable)
+			.innerJoin(inverterTable, eq(inverterTable.id, measurementTable.inverterId))
+			.where(
+				and(
+					eq(inverterTable.plantId, 1),
+					between(measurementTable.createdAt, start.toString(), end.toString())
+				)
+			)
+			.groupBy(measurementTable.createdAt)
+			.execute();
+	}
+
+	private static parseSelectFormat(format: ExportFormat[]) {
+		return format.reduce((acc, f) => {
+			switch (f) {
+				case 'date':
+					return { ...acc, createdAt: measurementTable.createdAt };
+				case 'pac':
+					return { ...acc, pac: sql<number>`sum(${measurementTable.pac})` };
+				case 'pdc':
+					return { ...acc, pdc: sql<number>`sum(${measurementTable.pdc})` };
+				case 'kdy':
+					return { ...acc, kdy: sql<number>`sum(${measurementTable.kdy})` };
+				case 'kt0':
+					return { ...acc, kt0: sql<number>`sum(${measurementTable.kt0})` };
+			}
+		}, {});
+	}
 }
-
-async function saveMeasurement(measurement: MeasurementResponse[], date: string) {
-	const ids = await db
-		.selectFrom('inverter')
-		.select(['id', 'addr'])
-		.where(
-			'addr',
-			'in',
-			measurement.map((m) => m.addr)
-		)
-		.execute();
-
-	await db
-		.insertInto('measurement')
-		.values(
-			measurement.map((m) => {
-				const inverter_id = ids.find((i) => i.addr === m.addr)?.id;
-
-				if (!inverter_id) throw new Error('Inverter not found');
-
-				return {
-					inverter_id,
-					fdat: new Date(m.fdat).toISOString(),
-					pac: m.pac,
-					pdc: m.pdc,
-					kdy: m.kdy,
-					kt0: m.kt0,
-					created_at: date
-				};
-			})
-		)
-		.execute();
-}
-
-async function exportMeasurements(format: string[], start: string, end: string) {
-	const select = format.map((f) => {
-		switch (f) {
-			case 'date':
-				return 'created_at';
-			case 'pac':
-				return sql<number>`sum(pac)`.as('pac');
-			case 'pdc':
-				return sql<number>`sum(pdc)`.as('pdc');
-			case 'kdy':
-				return sql<number>`sum(kdy)`.as('kdy');
-			case 'kt0':
-				return sql<number>`sum(kt0)`.as('kt0');
-			default:
-				return f;
-		}
-	}) as SelectExpression<Database, 'measurement'>[];
-
-	return await db
-		.selectFrom('measurement')
-		.select(select)
-		.innerJoin('inverter', 'inverter.id', 'measurement.inverter_id')
-		.where('inverter.plant_id', '=', 1)
-		.where((eb) => eb.between('created_at', start, end))
-		.groupBy('created_at')
-		.execute();
-}
-
-export default {
-	getOverview,
-	getLoad,
-	saveMeasurement,
-	exportMeasurements
-};

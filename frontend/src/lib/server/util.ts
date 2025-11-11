@@ -1,3 +1,4 @@
+import type { LayoutParams as AppLayoutParams, RouteId as AppRouteId } from '$app/types';
 import { fail, type RequestEvent } from '@sveltejs/kit';
 import type { ZodTypeAny, infer as zInfer } from 'zod';
 
@@ -5,8 +6,8 @@ import type { ZodTypeAny, infer as zInfer } from 'zod';
 type AnyRecord = Record<string, any>;
 
 type ParsedRequestEvent<
-	Params extends Partial<Record<string, string>> = Partial<Record<string, string>>,
-	RouteId extends string | null = string | null,
+	Params extends AppLayoutParams<'/'> = AppLayoutParams<'/'>,
+	RouteId extends AppRouteId | null = AppRouteId | null,
 	Json = unknown
 > = Omit<RequestEvent<Params, RouteId>, 'request'> & {
 	request: Omit<Request, 'formData'>;
@@ -15,18 +16,18 @@ type ParsedRequestEvent<
 
 type FormActionArgs<
 	Schema extends ZodTypeAny,
-	Params extends Partial<Record<string, string>> = Partial<Record<string, string>>,
+	Params extends AppLayoutParams<'/'> = AppLayoutParams<'/'>,
 	OutputData extends AnyRecord | void = AnyRecord | void,
-	RouteId extends string | null = string | null
+	RouteId extends AppRouteId | null = AppRouteId | null
 > = {
 	schema: Schema;
 	handler: ParsedAction<Params, OutputData, RouteId, zInfer<Schema>>;
 };
 
 export type ParsedAction<
-	Params extends Partial<Record<string, string>> = Partial<Record<string, string>>,
+	Params extends AppLayoutParams<'/'> = AppLayoutParams<'/'>,
 	OutputData extends AnyRecord | void = AnyRecord | void,
-	RouteId extends string | null = string | null,
+	RouteId extends AppRouteId | null = AppRouteId | null,
 	Json = unknown
 > = (event: ParsedRequestEvent<Params, RouteId, Json>) => OutputData | Promise<OutputData>;
 
@@ -38,9 +39,9 @@ export type ParsedAction<
  */
 export const formAction = <
 	Schema extends ZodTypeAny,
-	Params extends Partial<Record<string, string>> = Partial<Record<string, string>>,
+	Params extends AppLayoutParams<'/'> = AppLayoutParams<'/'>,
 	OutputData extends AnyRecord | void = AnyRecord | void,
-	RouteId extends string | null = string | null
+	RouteId extends AppRouteId | null = AppRouteId | null
 >({
 	schema,
 	handler
