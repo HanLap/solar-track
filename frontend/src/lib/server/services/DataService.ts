@@ -44,15 +44,11 @@ async function getOverview(date: CalendarDate) {
 
 	const ivmax = inverters.reduce((acc, i) => acc + i.ivmax, 400);
 
-	const load = getLoad(1);
-
 	return {
 		inverters,
 		ivmax,
-		load,
 		day: date.toString(),
-		lines: await Promise.all(lines),
-		loading: false
+		lines: await Promise.all(lines)
 	};
 }
 
@@ -67,7 +63,7 @@ async function getLoad(plantId: number) {
 				.groupBy('created_at')
 				.orderBy('measurement.created_at', 'desc')
 				.executeTakeFirst()
-		)?.sum ?? undefined
+		)?.sum ?? 0
 	);
 }
 
@@ -134,6 +130,7 @@ async function exportMeasurements(format: string[], start: string, end: string) 
 
 export default {
 	getOverview,
+	getLoad,
 	saveMeasurement,
 	exportMeasurements
 };

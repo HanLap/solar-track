@@ -18,15 +18,11 @@ const getOverview = (async (date: CalendarDate) => {
 
 	const ivmax = Math.ceil(inverters.reduce((acc, i) => acc + i.ivmax, 0) / 1000) * 1000 - 2000;
 
-	const load = getLoad(1);
-
 	return {
 		inverters,
 		ivmax,
-		load,
 		day: date.toString(),
-		lines: await Promise.all(lines),
-		loading: false
+		lines: await Promise.all(lines)
 	};
 }) satisfies (typeof OldDataService)['getOverview'];
 
@@ -165,6 +161,7 @@ function parseSelectFormat(format: ExportFormat[]) {
 export default {
 	getMeasurementCount,
 	getOverview,
+	getLoad,
 	saveMeasurement,
 	exportMeasurements
 };

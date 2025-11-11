@@ -1,11 +1,9 @@
 <script lang="ts">
-	import { run } from 'svelte/legacy';
-
 	import { enhance } from '$app/forms';
 	import { Button } from '$lib/components/ui/button';
 	import * as Tabs from '$lib/components/ui/tabs';
 	import { download } from '$lib/utils';
-	import { CalendarDate, today } from '@internationalized/date';
+	import { today } from '@internationalized/date';
 	import type { SubmitFunction } from '@sveltejs/kit';
 	import type { DataItem } from './Data';
 	import DataSelector from './DataSelector.svelte';
@@ -20,8 +18,12 @@
 
 	let end = $state(today('UTC'));
 	let start = $state(today('UTC'));
-	let rowCount: number | undefined = $state(undefined);
-	let fetchingRowCount: boolean = $state(false);
+
+	const args = $derived({
+		id: 1,
+		start: start.toString(),
+		end: end.toString()
+	});
 
 	let selectedCols: DataItem[] = $state([
 		{
@@ -56,23 +58,6 @@
 			start = end.subtract({ days: 3 });
 		}
 	}
-
-	async function handleFetchRows(start: CalendarDate, end: CalendarDate) {
-		fetchingRowCount = true;
-		try {
-			const res = await fetch(`/api/plant/${1}/count?start=${start}&end=${end}`);
-
-			const data = await res.json();
-			rowCount = data.count;
-		} catch (e) {
-			console.error(e);
-		}
-		fetchingRowCount = false;
-	}
-
-	$effect(() => {
-		handleFetchRows(start, end);
-	});
 </script>
 
 <div class="mx-auto max-w-[30rem] py-6">
@@ -82,11 +67,12 @@
 			<Tabs.Trigger value={exportModes.Day.id}>Tag</Tabs.Trigger>
 			<Tabs.Trigger value={exportModes.Span.id}>Zeitraum</Tabs.Trigger>
 		</Tabs.List>
+
 		<Tabs.Content value={exportModes.Day.id}>
-			<DayCard bind:start bind:end {fetchingRowCount} {rowCount} />
+			<DayCard bind:start bind:end />
 		</Tabs.Content>
 		<Tabs.Content value={exportModes.Span.id}>
-			<SpanCard bind:start bind:end {fetchingRowCount} {rowCount} />
+			<SpanCard bind:start bind:end />
 		</Tabs.Content>
 	</Tabs.Root>
 

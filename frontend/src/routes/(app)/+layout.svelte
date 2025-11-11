@@ -26,9 +26,9 @@
 
 <div class="flex h-screen w-screen flex-col">
 	<AppHeader />
-	{#key data.header.pathname}
-		<div in:fly={transitionIn} out:fly={transitionOut} class="h-full w-full flex-1">
-			{@render children?.()}
-		</div>
-	{/key}
+	<!-- {#key data.header.pathname} -->
+	<div class="h-full w-full flex-1">
+		{@render children?.()}
+	</div>
+	<!-- {/key} -->
 </div>

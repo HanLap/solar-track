@@ -1,20 +1,18 @@
 <script lang="ts">
-	import { chart } from '$lib/chartAction';
-	import { Progress } from '$lib/components/ui/progress';
+	import { chart } from '$lib/chartAction.svelte';
 	import { CalendarDate, ZonedDateTime } from '@internationalized/date';
 	import type { ApexOptions } from 'apexcharts';
 	import { mode } from 'mode-watcher';
+	import { getOverview } from '../../routes/(app)/data.remote';
 
 	interface Props {
-		ivmax: number;
 		date: CalendarDate;
-		lines: { name: string; data: { x: string; y: number }[] }[];
-		loading: boolean;
+		data?: Awaited<ReturnType<typeof getOverview>>['overview'];
 	}
 
-	let { ivmax, date, lines, loading }: Props = $props();
+	let { data, date }: Props = $props();
 
-	let options = $derived({
+	const options = $derived({
 		chart: {
 			type: 'line',
 			animations: {
@@ -25,11 +23,11 @@
 			},
 			background: 'transparent'
 		},
-		series: lines,
+		series: data?.lines ?? [],
 		yaxis: {
 			decimalsInFloat: 0,
 			min: 0,
-			max: ivmax
+			max: data?.ivmax
 		},
 		xaxis: {
 			type: 'datetime',
@@ -47,12 +45,7 @@
 </script>
 
 <div class="max-w-screen relative flex max-h-full w-[70rem] justify-center">
-	{#if loading}
-		<div class="absolute flex h-full w-full items-center p-20 backdrop-blur-sm">
-			<Progress />
-		</div>
-	{/if}
 	{#key mode.current}
-		<div use:chart={options} class="w-full"></div>
+		<div id="chart" {@attach chart(() => options)} class="w-full"></div>
 	{/key}
 </div>

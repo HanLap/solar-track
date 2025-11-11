@@ -3,6 +3,7 @@
 	import { AdminStatus } from '$lib/admin.svelte';
 	import * as Command from '$lib/components/ui/command/index.js';
 	import { Download, HousePlusIcon, Sun, ThermometerSun } from 'lucide-svelte';
+	import { saveMeasurement } from '../../routes/(app)/data.remote';
 
 	let open = $state(false);
 
@@ -29,10 +30,7 @@
 
 	async function handleSaveMeasurement() {
 		open = false;
-		await fetch('/?/saveMeasurement', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-		});
+		await saveMeasurement();
 		goto('/');
 	}
 

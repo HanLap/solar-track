@@ -8,11 +8,9 @@
 	interface Props {
 		start: CalendarDate;
 		end: CalendarDate;
-		fetchingRowCount: boolean;
-		rowCount: number | undefined;
 	}
 
-	let { start = $bindable(), end = $bindable(), fetchingRowCount, rowCount }: Props = $props();
+	let { start = $bindable(), end = $bindable() }: Props = $props();
 
 	function handleRangeChange(value: DateRange) {
 		if (!value.start || !value.end) return;
@@ -32,9 +30,7 @@
 	<Card.Content class="space-y-2">
 		<div class="flex items-center gap-2">
 			<DateRangePicker value={{ start, end }} onValueChange={handleRangeChange} />
+			<RowCount {start} {end} />
 		</div>
 	</Card.Content>
-	<Card.Footer>
-		<RowCount count={rowCount} fetching={fetchingRowCount} />
-	</Card.Footer>
 </Card.Root>

@@ -7,10 +7,6 @@ import { parseDate } from '@internationalized/date';
 import { fail } from '@sveltejs/kit';
 import type { Actions } from './$types';
 
-export async function load() {
-	return {};
-}
-
 const exportCsvAction = formAction({
 	schema: exportRequestSchema,
 	async handler({ json }) {

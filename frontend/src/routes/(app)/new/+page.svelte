@@ -10,7 +10,7 @@
 
 	<form class="mx-auto mt-4 flex flex-col gap-5" method="POST" use:enhance>
 		{#if form?.error}
-			<div class="border-destructive bg-destructive/20 rounded-lg border p-4 w-96">
+			<div class="border-destructive bg-destructive/20 w-96 rounded-lg border p-4">
 				Konnte die Solaranlage nicht erstellen: <br />{JSON.stringify(
 					form.error.fieldErrors,
 					null,

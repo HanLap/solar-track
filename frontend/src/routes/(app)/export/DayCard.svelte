@@ -7,11 +7,9 @@
 	interface Props {
 		start: CalendarDate;
 		end: CalendarDate;
-		fetchingRowCount: boolean;
-		rowCount: number | undefined;
 	}
 
-	let { start = $bindable(), end = $bindable(), fetchingRowCount, rowCount }: Props = $props();
+	let { start = $bindable(), end = $bindable() }: Props = $props();
 
 	function handleDayChange(value?: DateValue | undefined) {
 		if (!value) return;
@@ -30,9 +28,7 @@
 	<Card.Content class="space-y-2">
 		<div class="flex items-center gap-2">
 			<DatePicker value={start} onValueChange={handleDayChange} />
+			<RowCount {start} {end} />
 		</div>
 	</Card.Content>
-	<Card.Footer>
-		<RowCount fetching={fetchingRowCount} count={rowCount} />
-	</Card.Footer>
 </Card.Root>

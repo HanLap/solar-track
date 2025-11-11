@@ -1,27 +1,23 @@
 <script lang="ts">
-	import { beforeNavigate, invalidateAll } from '$app/navigation';
+	import { appState } from '$lib/appState.svelte';
 	import CurrentLoad from '$lib/components/CurrentLoad.svelte';
 	import DayChart from '$lib/components/DayChart.svelte';
-	import { parseDate } from '@internationalized/date';
-	import { onMount } from 'svelte';
+	import Skeleton from '$lib/components/ui/skeleton/skeleton.svelte';
+	import { getOverview } from './data.remote';
 
-	let { data } = $props();
+	const state = $derived(appState());
 
-	let date = $derived(parseDate(data.day));
+	const date = $derived(state.date);
+	const day = $derived(state.day);
 
-	beforeNavigate(({ from, to }) => {
-		if (from?.url?.href === to?.url?.href) {
-			return;
-		}
+	const query = $derived(getOverview(day));
 
-		// data.loading = true;
-		// data.lines = [];
-	});
-
-	onMount(() => {
+	$effect(() => {
+		day;
 		const refresh = setInterval(() => {
-			invalidateAll();
-		}, 1000 * 60);
+			console.log('Refreshing data...', day ?? '');
+			getOverview(day).refresh();
+		}, 5_000);
 
 		return () => {
 			clearInterval(refresh);
@@ -30,13 +26,23 @@
 </script>
 
 <div class="flex h-full flex-1 flex-col gap-8 px-4 py-8 lg:px-20">
-	<div class="h-16">
-		{#await data.load then load}
-			<CurrentLoad load={load ?? 0} ivmax={data.ivmax} />
-		{/await}
-	</div>
+	{#if query.error}
+		<div class="flex flex-1 flex-col items-center justify-start gap-8">
+			<div class="text-red-500">Error loading data</div>
+		</div>
+	{:else if !query.ready || !query.current}
+		<div class="flex flex-1 flex-col items-center justify-start gap-8">
+			<Skeleton class="h-16 w-[40rem] max-w-full" />
+			<Skeleton class="aspect-video w-full" />
+		</div>
+	{:else}
+		{@const data = query.current}
+		<div class="h-16">
+			<CurrentLoad currentLoad={data.currentLoad} ivmax={data.overview.ivmax} />
+		</div>
 
-	<div class="relative flex justify-center lg:flex-1">
-		<DayChart {date} ivmax={data.ivmax} lines={data.lines} loading={data.loading} />
-	</div>
+		<div class="relative flex justify-center lg:flex-1">
+			<DayChart {date} data={data.overview} />
+		</div>
+	{/if}
 </div>

@@ -1,14 +1,15 @@
 <script lang="ts">
 	import { Progress } from '$lib/components/ui/progress';
+	import { cn } from '$lib/utils';
 
 	interface Props {
-		load: number;
 		ivmax: number;
+		currentLoad: number;
 	}
 
-	let { load, ivmax }: Props = $props();
+	let { currentLoad, ivmax }: Props = $props();
 
-	let roundedLoad = $derived((Math.round(load * 10) / 10).toFixed(1));
+	let roundedLoad = $derived((Math.round(currentLoad * 10) / 10).toFixed(1));
 </script>
 
 <div class="flex w-full flex-col items-center justify-center gap-2">
@@ -16,11 +17,11 @@
 		<div class="flex justify-between px-4 py-1">
 			<span>Momentane Auslastung:</span>
 
-			<div class="flex gap-2">
+			<div class={cn('flex gap-2')}>
 				<span class="border-r-2 pr-2">{roundedLoad} W</span>
-				<span>{Math.round((load / ivmax) * 100)}%</span>
+				<span>{Math.round((currentLoad / ivmax) * 100)}%</span>
 			</div>
 		</div>
-		<Progress value={load} max={ivmax} />
+		<Progress value={currentLoad} max={ivmax} />
 	</div>
 </div>
