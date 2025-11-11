@@ -2,7 +2,7 @@ import z from 'zod';
 import { zfd } from 'zod-form-data';
 
 const formatEnumSchema = z.enum(['date', 'pac', 'pdc', 'kdy', 'kt0'], {
-	required_error: 'Format is required'
+	error: 'Format is required'
 });
 
 export const exportRequestSchema = zfd.formData({

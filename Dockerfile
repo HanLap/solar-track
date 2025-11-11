@@ -17,7 +17,7 @@ FROM base AS frontend
 COPY --from=build /prod/frontend /prod/frontend
 WORKDIR /prod/frontend
 EXPOSE 8000
-CMD node migrate.js && pnpm db:migrate:prod && node build/index.js
+CMD pnpm db:migrate:prod && node build/index.js
 
 ####
 FROM base AS update-scheduler

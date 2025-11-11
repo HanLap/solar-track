@@ -1,6 +1,5 @@
-export async function load({ data }) {
+export async function load() {
 	return {
-		...data,
 		header: {
 			navigateBack: '/'
 		}

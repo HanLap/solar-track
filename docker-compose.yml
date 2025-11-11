@@ -12,8 +12,6 @@ services:
       DB_PATH: /data/data.db
       ORIGIN: http://localhost
 
-      DB_USE_DRIZZLE: true
-
       DATABASE_URL: "postgres://root:password@timescaledb:5432/solar-panel"
     volumes:
       - ./data:/data:rw
