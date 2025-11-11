@@ -17,7 +17,7 @@
 		const refresh = setInterval(() => {
 			console.log('Refreshing data...', day ?? '');
 			getOverview(day).refresh();
-		}, 5_000);
+		}, 60_000);
 
 		return () => {
 			clearInterval(refresh);
