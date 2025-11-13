@@ -1,4 +1,4 @@
-import { CreateSolarPlantSchema } from '$lib/schemas/solar-plant';
+import { CreateSolarPlantSchema } from '$lib/models/solar-plant';
 import SolarPlantService from '$lib/server/services/SolarPlantService';
 import { formAction } from '$lib/server/util.js';
 import { fail, redirect } from '@sveltejs/kit';

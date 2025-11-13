@@ -1,3 +1,2 @@
-import api from './api';
 
-export default api;
+export { SolarMaxApi as default } from "./api";

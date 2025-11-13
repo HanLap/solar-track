@@ -1,18 +1,15 @@
 import { env } from '$env/dynamic/private';
+import { api } from '$lib/server/api';
 import type { getInvertersResponse as GetInvertersResponse, MeasurementResponse } from './Models';
 
-async function get(fetchFn: typeof fetch, path: string) {
-	const response = await fetchFn(`${env.API_PATH}${path}`);
+const solarMaxApi = <TData>(path: string) => api<TData>(`${env.SOLARMAX_API_PATH}${path}`);
 
-	return await response.json();
+export abstract class SolarMaxApi {
+	static async getInverters() {
+		return await solarMaxApi<GetInvertersResponse[]>('/inverters');
+	}
+
+	static async getMeasurement() {
+		return solarMaxApi<MeasurementResponse[]>('/measurement');
+	}
 }
-
-async function getInverters(fetchFn: typeof fetch) {
-	return (await get(fetchFn, '/inverters')) as GetInvertersResponse[];
-}
-
-async function getMeasurement(fetchFn: typeof fetch) {
-	return (await get(fetchFn, '/measurement')) as MeasurementResponse[];
-}
-
-export default { getInverters, getMeasurement };

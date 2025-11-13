@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { LoaderCircle } from 'lucide-svelte';
 	import type { CalendarDate } from '@internationalized/date';
-	import { getMeasurementCount } from '$lib/features/export/endpoints/getMeasurementCount.remote';
+	import { getMeasurementCount } from '$lib/remote/getMeasurementCount.remote';
 
 	interface Props {
 		start: CalendarDate;

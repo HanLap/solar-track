@@ -1,4 +1,4 @@
-import type { CreateSolarPlantRequest } from '$lib/schemas/solar-plant';
+import type { CreateSolarPlantRequest } from '$lib/models/solar-plant';
 import { db } from '../db/drizzle';
 import { solarPlantTble } from '../db/drizzle/schema';
 

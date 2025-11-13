@@ -1,4 +1,4 @@
-import { exportRequestSchema } from '$lib/schemas/export-request';
+import { exportRequestSchema } from '$lib/models/export-request';
 import DataService from '$lib/server/services/DataService';
 import { formAction } from '$lib/server/util';
 import { parseDate } from '@internationalized/date';
