@@ -9,11 +9,11 @@ services:
     environment:
       SOLARMAX_API_PATH: http://solarmax-service:8000
       DB_PATH: /data/data.db
-      ORIGIN: '${ORIGIN}'
+      ORIGIN: '${ORIGIN:?}'
 
-      ADMIN_SECRET: '${ADMIN_SECRET}'
+      ADMIN_SECRET: '${ADMIN_SECRET:?}'
 
-      DATABASE_URL: '${DATABASE_URL}'
+      DATABASE_URL: '${DATABASE_URL:?}'
     volumes:
       - ./data:/data:rw
     healthcheck:
@@ -42,5 +42,5 @@ services:
       - frontend
     environment:
       API_PATH: http://frontend:3000
-      ADMIN_SECRET: '${ADMIN_SECRET}'
+      ADMIN_SECRET: '${ADMIN_SECRET:?}'
       CRON_PATTERN: '0 * * * * *'
