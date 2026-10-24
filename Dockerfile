@@ -1,4 +1,4 @@
-FROM node:24-slim AS base
+FROM node:24.22.1-slim AS base
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable
@@ -16,6 +16,7 @@ RUN pnpm deploy --filter=update-scheduler --prod /prod/update-scheduler
 FROM base AS frontend
 COPY --from=build /prod/frontend /prod/frontend
 WORKDIR /prod/frontend
+RUN corepack prepare
 EXPOSE 8000
 CMD pnpm db:migrate:prod && node build/index.js
 

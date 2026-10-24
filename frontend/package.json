@@ -69,5 +69,6 @@
 		"drizzle",
 		"migrate.js",
 		"migrations"
-	]
+	],
+  "packageManager": "pnpm@9.1.1"
 }
