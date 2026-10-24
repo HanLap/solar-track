@@ -3,8 +3,12 @@ from src.solarmax import SolarMax
 from pydantic import BaseModel
 from typing import List
 from datetime import date
+import os
 
 app = FastAPI()
+
+INVERTER_HOST = os.environ.get('SOLARMAX_HOST', '192.168.178.123')
+INVERTER_PORT = int(os.environ.get('SOLARMAX_PORT', '12345'))
 
 class Measurement(BaseModel):
 	addr: int
@@ -17,11 +21,11 @@ class Measurement(BaseModel):
 @app.get("/measurement")
 async def root():
 
-    inverters = { '192.168.178.123': [9, 10], }
+    inverters = { INVERTER_HOST: [9, 10], }
     
     smlist = []
     for host in inverters.keys():
-        sm = SolarMax(host, 12345)
+        sm = SolarMax(host, INVERTER_PORT)
         sm.use_inverters(inverters[host])
         smlist.append(sm)
     
@@ -71,11 +75,11 @@ class Inverter(BaseModel):
 @app.get("/inverters")
 async def get_inverters():
 
-    inverters = { '192.168.178.123': [9, 10], }
+    inverters = { INVERTER_HOST: [9, 10], }
     
     smlist = []
     for host in inverters.keys():
-        sm = SolarMax(host, 12345)
+        sm = SolarMax(host, INVERTER_PORT)
         sm.use_inverters(inverters[host])
         smlist.append(sm)
     

@@ -11,6 +11,7 @@ RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 RUN pnpm run -r build
 RUN pnpm deploy --filter=frontend --prod /prod/frontend
 RUN pnpm deploy --filter=update-scheduler --prod /prod/update-scheduler
+RUN pnpm deploy --filter=solarmax-mock --prod /prod/solarmax-mock
 
 ####
 FROM base AS frontend
@@ -25,6 +26,14 @@ FROM base AS update-scheduler
 COPY --from=build /prod/update-scheduler /prod/update-scheduler
 WORKDIR /prod/update-scheduler
 CMD [ "node", "main.js" ]
+
+####
+FROM base AS solarmax-mock
+COPY --from=build /prod/solarmax-mock /prod/solarmax-mock
+WORKDIR /prod/solarmax-mock
+ENV PORT=12345
+EXPOSE 12345
+CMD [ "node", "main.ts" ]
 
 ####
 FROM python:3.12.0-alpine3.18 AS solarmax-service

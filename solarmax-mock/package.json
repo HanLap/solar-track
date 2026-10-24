@@ -1,0 +1,17 @@
+{
+  "name": "solarmax-mock",
+  "version": "1.0.0",
+  "description": "Mock of the SolarMax inverters (TCP protocol) for development",
+  "main": "main.ts",
+  "type": "module",
+  "scripts": {
+    "start": "node main.ts",
+    "dev": "node --watch main.ts",
+    "check": "tsc --noEmit"
+  },
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "typescript": "^5.9.0"
+  }
+}

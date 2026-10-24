@@ -20,9 +20,19 @@ services:
       timeout: 5s
       start_period: 10s
       retries: 3
+      
   solarmax-service:
     build:
       target: solarmax-service
+    environment:
+      SOLARMAX_HOST: solarmax-mock
+    depends_on:
+      - solarmax-mock
+
+  solarmax-mock:
+    build:
+      target: solarmax-mock
+
   update-scheduler:
     build:
       target: update-scheduler

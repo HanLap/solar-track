@@ -19,11 +19,23 @@ services:
       - timescaledb
     profiles:
       - services
+
   solarmax-service:
     build:
       target: solarmax-service
+    environment:
+      SOLARMAX_HOST: solarmax-mock
+    depends_on:
+      - solarmax-mock
     profiles:
       - services
+
+  solarmax-mock:
+    build:
+      target: solarmax-mock
+    profiles:
+      - services
+      
   update-scheduler:
     build:
       target: update-scheduler
@@ -34,6 +46,7 @@ services:
       CRON_PATTERN: '0 * * * * *'
     profiles:
       - services
+
   timescaledb:
     image: timescale/timescaledb-ha:pg17
     ports:
