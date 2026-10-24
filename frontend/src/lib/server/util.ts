@@ -1,4 +1,5 @@
 import type { LayoutParams as AppLayoutParams, RouteId as AppRouteId } from '$app/types';
+import { env } from '$env/dynamic/private';
 import { fail, type RequestEvent } from '@sveltejs/kit';
 import type { ZodTypeAny, infer as zInfer } from 'zod';
 
@@ -58,3 +59,7 @@ export const formAction = <
 		return await handler({ ...event, json });
 	};
 };
+
+export function isAdminAuthenticated(token?: string | null) {
+	return token === env.ADMIN_SECRET;
+}

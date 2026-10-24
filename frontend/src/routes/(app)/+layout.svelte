@@ -1,21 +1,13 @@
 <script lang="ts">
 	import AppHeader from '$lib/components/AppHeader.svelte';
+	import { Toaster } from '$lib/components/ui/sonner';
 	import { ThemeSwitcher } from '$lib/components/ui/theme-switcher';
 	import { ModeWatcher } from 'mode-watcher';
-	import { cubicIn, cubicOut } from 'svelte/easing';
-	import { fly } from 'svelte/transition';
 	import CommandPanel from '../../lib/components/CommandPanel.svelte';
 
 	import '../../app.css';
 
-	let { data, children } = $props();
-
-	const duration = 300;
-	const delay = duration + 0;
-	const x = 20;
-
-	const transitionIn = { easing: cubicOut, x, duration, delay };
-	const transitionOut = { easing: cubicIn, x: -x, duration };
+	let { children } = $props();
 </script>
 
 <ModeWatcher />
@@ -24,11 +16,11 @@
 
 <CommandPanel />
 
+<Toaster position="top-center" />
+
 <div class="flex h-screen w-screen flex-col">
 	<AppHeader />
-	<!-- {#key data.header.pathname} -->
 	<div class="h-full w-full flex-1">
 		{@render children?.()}
 	</div>
-	<!-- {/key} -->
 </div>

@@ -2,7 +2,9 @@ import { command, query } from '$app/server';
 import { parseDateWithFallback } from '$lib/dateUtils.js';
 import type { MeasurementResponse } from '$lib/server/api/solarmax/Models';
 import DataService from '$lib/server/services/DataService.js';
+import { isAdminAuthenticated } from '$lib/server/util';
 import { now } from '@internationalized/date';
+import { error } from '@sveltejs/kit';
 import { z } from 'zod';
 
 export const getOverview = query(z.string().nullable(), async (day) => {
@@ -19,7 +21,11 @@ export const getLoad = query(async () => {
 	return DataService.getLoad(1);
 });
 
-export const saveMeasurement = command(async () => {
+const TokenSchema = z.object({ token: z.string().nullish() });
+
+export const saveMeasurement = command(TokenSchema, async ({ token }) => {
+	if (!isAdminAuthenticated(token)) error(401, 'Unauthorized');
+
 	const date = now('UTC');
 
 	const measurement: MeasurementResponse[] = [

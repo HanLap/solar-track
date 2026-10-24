@@ -4,8 +4,11 @@
 	import * as Command from '$lib/components/ui/command/index.js';
 	import { Download, HousePlusIcon, Sun, ThermometerSun } from 'lucide-svelte';
 	import { saveMeasurement } from '../../routes/(app)/data.remote';
+	import { resolve } from '$app/paths';
+	import { toast } from 'svelte-sonner';
 
 	let open = $state(false);
+	const adminStatus = AdminStatus();
 
 	$effect(() => {
 		function handleKeydown(e: KeyboardEvent) {
@@ -30,15 +33,22 @@
 
 	async function handleSaveMeasurement() {
 		open = false;
-		await saveMeasurement();
-		goto('/');
+		try {
+			await saveMeasurement({ token: adminStatus.token });
+			goto(resolve('/'));
+		} catch (e) {
+			console.error(e);
+			if (e && typeof e === 'object' && 'status' in e) {
+				toast.error(`Could not save measurement. Reason: ${e.status}`);
+			} else {
+				toast.error(`Something Unexpected happened`);
+			}
+		}
 	}
-
-	const adminStatus = AdminStatus();
 </script>
 
 <Command.Dialog bind:open>
-	<Command.Input placeholder="Suche..." />
+	<Command.Input autofocus placeholder="Suche..." />
 	<Command.List>
 		<Command.Empty>Keine Ergebnisse gefunden.</Command.Empty>
 		<Command.Group heading="Navgiation">
@@ -53,14 +63,14 @@
 		</Command.Group>
 		{#if adminStatus.enabled}
 			<Command.Separator />
-			<Command.Group heading="Debug">
+			<Command.Group heading="Admin">
 				<Command.Item onSelect={handleSaveMeasurement}>
 					<ThermometerSun class="mr-2 h-4 w-4" />
 					<span>Get Measurement</span>
 				</Command.Item>
 				<Command.LinkItem href="/new" {...close}>
 					<HousePlusIcon class="mr-2 h-4 w-4" />
-					<span>Creat Solar Plant</span>
+					<span>Create Solar Plant</span>
 				</Command.LinkItem>
 			</Command.Group>
 		{/if}

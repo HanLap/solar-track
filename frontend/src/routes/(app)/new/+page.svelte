@@ -1,8 +1,12 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import { AdminStatus } from '$lib/admin.svelte.js';
 	import { Button } from '$lib/components/ui/button';
+	import { Input } from '$lib/components/ui/input';
+	import { Textarea } from '$lib/components/ui/textarea';
 
 	let { form } = $props();
+	const admin = AdminStatus();
 </script>
 
 <div class="mx-0 mt-4 flex flex-col justify-center md:mx-10">
@@ -21,21 +25,21 @@
 
 		<label class="label w-80">
 			<span>Name:</span>
-			<input class="input" type="text" name="name" value="" />
+			<Input type="text" name="name" value="" />
 		</label>
 		<label class="label w-80">
 			<span>Beschreibung:</span>
-			<textarea class="textarea" name="description" value=""></textarea>
+			<Textarea name="description" value=""></Textarea>
 		</label>
 		<div class="flex gap-4">
 			<label class="label w-32">
 				<span>IP-Adresse:</span>
-				<input class="input px-2" type="text" name="ip" placeholder="111.111.111.111" />
+				<Input type="text" name="ip" placeholder="111.111.111.111" />
 			</label>
 
 			<label class="label w-24">
 				<span>Port:</span>
-				<input class="input px-2" type="number" name="port" value={12345} />
+				<Input type="number" name="port" value={12345} />
 			</label>
 		</div>
 		<div>
@@ -43,15 +47,17 @@
 			<div class="flex gap-4">
 				<label class="label w-16">
 					<span>Start:</span>
-					<input class="input px-2" type="number" name="addrStart" value={1} />
+					<Input type="number" name="startAddr" value={1} />
 				</label>
 				<label class="label w-16">
 					<span>Ende:</span>
-					<input class="input px-2" type="number" name="addrEnd" value={10} />
+					<Input type="number" name="endAddr" value={10} />
 				</label>
 			</div>
 		</div>
 
-		<Button class="btn variant-filled-primary mt-10" type="submit">Erstellen</Button>
+		<input name="token" readonly hidden value={admin.token} >
+
+		<Button type="submit">Erstellen</Button>
 	</form>
 </div>

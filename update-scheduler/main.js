@@ -10,6 +10,9 @@ const job = () =>
 
         await fetch(`${process.env.API_PATH ?? "http://localhost:5173"}/api/measurement`, {
           method: "POST",
+          headers: {
+            "Authorization": process.env.ADMIN_SECRET
+          }
         });
 
       } catch (error) {

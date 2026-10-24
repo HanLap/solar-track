@@ -3,9 +3,10 @@ import SolarApi from '../api/solarmax';
 import DataService from './DataService';
 
 export async function createMeasurement() {
-	const measurement = await SolarApi.getMeasurement(fetch);
+	const measurement = await SolarApi.getMeasurement();
 
 	if (measurement.length === 0) throw new Error('No measurement data');
+	console.debug("received measurements:", measurement)
 
 	try {
 		const date = now('UTC');

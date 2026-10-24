@@ -10,6 +10,7 @@ services:
       SOLARMAX_API_PATH: http://solarmax-service:8000
       DB_PATH: /data/data.db
       ORIGIN: '${ORIGIN}'
+      ADMIN_SECRET: '${ADMIN_SECRET}'
 
       DATABASE_URL: "postgres://root:password@timescaledb:5432/solar-panel"
     volumes: 
@@ -44,6 +45,7 @@ services:
       - frontend
     environment:
       API_PATH: http://frontend:3000
+      ADMIN_SECRET: '${ADMIN_SECRET}'
       CRON_PATTERN: "0 * * * * *"
     logging:
       driver: "json-file"
